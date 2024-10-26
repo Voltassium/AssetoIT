@@ -1,5 +1,6 @@
-# AssetoIT
-aplikasi Laravel yang dibangun dengan Breeze, Vue, Inertia, dan Filament.
+# AssetoIT 
+
+Ini adalah aplikasi Laravel yang dibangun dengan Breeze, Vue, Inertia, dan Filament.
 
 ## Prerequisites
 Sebelum Anda mulai, pastikan Anda telah memenuhi persyaratan berikut:
@@ -7,36 +8,49 @@ Sebelum Anda mulai, pastikan Anda telah memenuhi persyaratan berikut:
 - PHP >= 8.0
 - Composer
 - Node.js >= 14.x
-- npm
+- npm atau Yarn
 - Git
 
 ## Memulai
-Ikuti instruksi ini untuk menyiapkan proyek di komputer lokal Anda.
+Ikuti instruksi ini untuk menyiapkan proyek di mesin lokal Anda.
 
 ### 1. Kloning repositori
-git clone https://github.com/username-anda/AssetoIT.git
+
+dengan menggunakan command dibawah
+```bash
+git clone https://github.com/Voltassium/AssetoIT.git
 cd AssetoIT
+```
+
+atau download Github Desktop
 
 ### 2. Instal dependensi PHP
+
 Jalankan perintah berikut untuk menginstal dependensi PHP menggunakan Composer:
 
+```bash
 composer install
+```
 
 ### 3. Siapkan lingkungan
+
 Salin file `.env.example` ke `.env`:
 
+```bash
 cp .env.example .env
+```
 
 Kemudian, perbarui file `.env` Anda dengan pengaturan database dan aplikasi Anda.
 
-4. Hasilkan kunci aplikasi
+### 4. Hasilkan kunci aplikasi
+
 Jalankan perintah berikut untuk menghasilkan kunci aplikasi:
 
 ```bash
 php artisan key:generate
 ```
 
-### 5. Jalankan migrasi (Opsional)
+### 5. Jalankan migrasi
 
 Jika Anda memiliki migrasi yang ingin dijalankan, Anda dapat melakukannya dengan:
 
@@ -44,7 +58,7 @@ Jika Anda memiliki migrasi yang ingin dijalankan, Anda dapat melakukannya dengan
 php artisan migrate
 ```
 
-### 6. Instal dependensi frontend
+### 6. Install dependensi frontend
 
 Jalankan perintah berikut untuk menginstal dependensi JavaScript:
 
@@ -97,11 +111,3 @@ Kontribusi sangat diterima! Silakan fork repositori dan kirim pull request untuk
 ## Lisensi
 
 Proyek ini dilisensikan di bawah Lisensi MIT - lihat file [LICENSE](LICENSE) untuk detail lebih lanjut.
-```
-
-### Catatan
-1. Gantilah `username-anda` dan `nama-repo-anda` dengan nama pengguna GitHub dan nama repositori Anda yang sebenarnya.
-2. Sesuaikan detail spesifik tentang proyek, seperti langkah tambahan yang mungkin diperlukan untuk pengaturan, konfigurasi tertentu, atau dependensi lain.
-3. Tambahkan bagian untuk alat atau pustaka tambahan yang telah Anda sertakan dalam proyek.
-
-Silakan modifikasi template ini agar sesuai dengan kebutuhan proyek Anda!
