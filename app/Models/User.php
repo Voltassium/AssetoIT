@@ -59,4 +59,14 @@ class User extends Authenticatable
             ->withPivot('borrow_date', 'return_date')
             ->withTimestamps();
     }
+
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class);
+    }
+    public function hasRole($role)
+    {
+        return $this->roles()->where('name', $role)->exists();
+    }
+
 }

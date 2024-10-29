@@ -18,11 +18,11 @@ const deleteUser = (id) => {
 </script>
 
 <template>
-    <Head title="User Management" />
+    <Head title="Managemen User" />
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">User Management</h2>
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Manajemen User</h2>
         </template>
 
         <div class="py-12">
@@ -33,19 +33,18 @@ const deleteUser = (id) => {
                             <h3 class="text-2xl font-semibold">Users</h3>
                             <Link
                                 :href="route('users.create')"
-                                class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                            >
-                                Add New User
+                                class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                                Tambah User
                             </Link>
                         </div>
 
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama</th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created At</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal Pembuatan</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">

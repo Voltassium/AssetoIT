@@ -31,11 +31,6 @@ const toggleSidebar = () => {
                                 </svg>
                             </button>
                             <!-- Logo -->
-                            <div class="shrink-0 flex items-center">
-                                <Link :href="route('dashboard')">
-                                    <ApplicationLogo class="block h-9 w-auto fill-current text-gray-800" />
-                                </Link>
-                            </div>
                         </div>
 
                         <div class="hidden sm:flex sm:items-center sm:ml-6">
@@ -126,19 +121,11 @@ const toggleSidebar = () => {
                         </Link>
                         <Link :href="route('devices.index')" class="block py-2 px-4 hover:bg-gray-700"
                             :class="{ 'bg-gray-700': route().current('devices.index') }">
-                        Device List
-                        </Link>
-                        <Link :href="route('damaged-devices')" class="block py-2 px-4 hover:bg-gray-700"
-                            :class="{ 'bg-gray-700': route().current('damaged-devices') }">
-                        Damaged Devices
-                        </Link>
-                        <Link :href="route('borrowing.index')" class="block py-2 px-4 hover:bg-gray-700"
-                            :class="{ 'bg-gray-700': route().current('borrowing.index') }">
-                        Borrowing Management
+                        List Perangkat
                         </Link>
                         <Link :href="route('users.index')" class="block py-2 px-4 hover:bg-gray-700"
                             :class="{ 'bg-gray-700': route().current('users.index') }">
-                        User Management
+                        Manajemen User
                         </Link>
                     </nav>
                 </aside>

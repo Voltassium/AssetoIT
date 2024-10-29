@@ -34,13 +34,13 @@ function submit() {
                         <form @submit.prevent="submit">
                             <div class="mb-4">
                                 <label class="block text-gray-700 text-sm font-bold mb-2" for="name">
-                                    Name
+                                    Nama
                                 </label>
                                 <input v-model="form.name" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="name" type="text" placeholder="Device name">
                             </div>
                             <div class="mb-4">
                                 <label class="block text-gray-700 text-sm font-bold mb-2" for="type">
-                                    Type
+                                    Tipe
                                 </label>
                                 <input v-model="form.type" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="type" type="text" placeholder="Device type">
                             </div>
@@ -63,7 +63,7 @@ function submit() {
                             </div>
                             <div class="flex items-center justify-between">
                                 <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
-                                    Update Device
+                                    Update Perangkat
                                 </button>
                             </div>
                         </form>

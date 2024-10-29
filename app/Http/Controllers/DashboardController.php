@@ -8,7 +8,7 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        // For now, let's use dummy data until your models are set up
+        // Dummy Data Sementara
         $stats = [
             'availableDevices' => 150,
             'damagedDevices' => 12,
@@ -17,7 +17,7 @@ class DashboardController extends Controller
             'recentBorrowings' => [],
             'recentDevices' => [],
         ];
-        // When your models are ready, uncomment this:
+
         /*
         $stats = [
             'availableDevices' => Device::where('status', 'available')->count(),

@@ -24,11 +24,11 @@ const statusColors = {
 </script>
 
 <template>
-    <Head title="Device List" />
+    <Head title="List Perangkat" />
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Device List</h2>
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">List Perangkat</h2>
         </template>
 
         <div class="py-12">
@@ -36,23 +36,23 @@ const statusColors = {
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6 bg-white border-b border-gray-200">
                         <div class="flex justify-between mb-6">
-                            <h3 class="text-2xl font-semibold">Devices</h3>
+                            <h3 class="text-2xl font-semibold">Perangkat</h3>
                             <Link
                                 :href="route('devices.create')"
                                 class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
                             >
-                                Add New Device
+                                Tambah Perangkat Baru
                             </Link>
                         </div>
 
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipe</th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Manufacturer</th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">

@@ -28,23 +28,20 @@ defineProps({
                         <Link
                             v-if="$page.props.auth.user"
                             :href="route('dashboard')"
-                            class="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 transition"
-                        >
+                            class="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 transition">
                             Dashboard
                         </Link>
                         <template v-else>
                             <Link
                                 :href="route('login')"
-                                class="text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition"
-                            >
+                                class="text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition">
                                 Log in
                             </Link>
                             <Link
                                 v-if="canRegister"
                                 :href="route('register')"
-                                class="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 transition"
-                            >
-                                Get Started
+                                class="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 transition">
+                                Register
                             </Link>
                         </template>
                     </template>
@@ -54,49 +51,20 @@ defineProps({
         <!-- Hero Section -->
         <div class="container mx-auto px-6 py-16 text-center">
             <h1 class="mb-4 text-4xl font-bold text-gray-900 dark:text-white sm:text-5xl md:text-6xl">
-                Simplify Your IT Asset Management
+                Sistem Inventaris Asset IT D3 Teknik Informatika
             </h1>
-            <p class="mb-8 text-lg text-gray-600 dark:text-gray-300">
-                Track, manage, and optimize your IT assets with our comprehensive inventory management solution.
-            </p>
-            <div class="flex justify-center space-x-4">
-                <Link
-                    v-if="canRegister"
-                    :href="route('register')"
-                    class="rounded-lg bg-blue-600 px-8 py-3 text-lg font-semibold text-white hover:bg-blue-700 transition"
-                >
-                    Start Free Trial
-                </Link>
-                <a
-                    href="#features"
-                    class="rounded-lg border border-gray-300 px-8 py-3 text-lg font-semibold text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 transition"
-                >
-                    Learn More
-                </a>
-            </div>
         </div>
         <!-- Features Section -->
+
         <div id="features" class="bg-gray-50 dark:bg-gray-800 py-16">
             <div class="container mx-auto px-6">
                 <h2 class="mb-12 text-center text-3xl font-bold text-gray-900 dark:text-white">
-                    Key Features
+                    Feature
                 </h2>
-                <div class="grid grid-cols-1 gap-8 md:grid-cols-2
- lg:grid-cols-3">
-                    <!-- Feature 1 -->
+                <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-2">
                     <div class="rounded-lg bg-white p-6 shadow-md dark:bg-gray-700">
                         <h3 class="mb-3 text-xl font-semibold text-gray-900 dark:text-white">Asset Tracking</h3>
-                        <p class="text-gray-600 dark:text-gray-300">Keep tabs on all your IT assets in real-time with our powerful tracking system.</p>
-                    </div>
-                    <!-- Feature 2 -->
-                    <div class="rounded-lg bg-white p-6 shadow-md dark:bg-gray-700">
-                        <h3 class="mb-3 text-xl font-semibold text-gray-900 dark:text-white">Maintenance Scheduling</h3>
-                        <p class="text-gray-600 dark:text-gray-300">Set up automated maintenance reminders to keep your assets in top condition.</p>
-                    </div>
-                    <!-- Feature 3 -->
-                    <div class="rounded-lg bg-white p-6 shadow-md dark:bg-gray-700">
-                        <h3 class="mb-3 text-xl font-semibold text-gray-900 dark:text-white">Reporting & Analytics</h3>
-                        <p class="text-gray-600 dark:text-gray-300">Generate insightful reports to make data-driven decisions about your IT infrastructure.</p>
+                        <p class="text-gray-600 dark:text-gray-300">Lihat Status Perangkat dimana Saja!</p>
                     </div>
                 </div>
             </div>
