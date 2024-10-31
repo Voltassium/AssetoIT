@@ -18,6 +18,7 @@ defineProps({
             <div class="flex items-center justify-between">
                 <div class="flex items-center">
                     <!-- Logo -->
+                     <img class="h-8 w-8" src="../../image/Asseto.png" alt="">
                     <div class="text-2xl font-bold text-gray-800 dark:text-white">
                         Asseto<span class="text-blue-600">IT</span>
                     </div>
@@ -51,7 +52,7 @@ defineProps({
         <!-- Hero Section -->
         <div class="container mx-auto px-6 py-16 text-center">
             <h1 class="mb-4 text-4xl font-bold text-gray-900 dark:text-white sm:text-5xl md:text-6xl">
-                Sistem Inventaris Asset IT D3 Teknik Informatika
+                Sistem Inventaris D3 Teknik Informatika
             </h1>
         </div>
         <!-- Features Section -->
@@ -65,6 +66,10 @@ defineProps({
                     <div class="rounded-lg bg-white p-6 shadow-md dark:bg-gray-700">
                         <h3 class="mb-3 text-xl font-semibold text-gray-900 dark:text-white">Asset Tracking</h3>
                         <p class="text-gray-600 dark:text-gray-300">Lihat Status Perangkat dimana Saja!</p>
+                    </div>
+                    <div class="rounded-lg bg-white p-6 shadow-md dark:bg-gray-700">
+                        <h3 class="mb-3 text-xl font-semibold text-gray-900 dark:text-white">Pelaporan</h3>
+                        <p class="text-gray-600 dark:text-gray-300">Mencetak Laporan perangkat dengan akurat dan cepat!</p>
                     </div>
                 </div>
             </div>
