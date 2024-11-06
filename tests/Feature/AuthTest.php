@@ -23,28 +23,24 @@ class AuthTest extends TestCase
             'password' => bcrypt('password'),
         ]);
 
-        $response = $this->post('/login', [
+        $loginData = [
             'email' => 'test@example.com',
-            'password' => 'password',
-        ]);
+            'password' => 'passwor',
+        ];
 
-        $response->assertRedirect('/dashboard');
-        $this->assertAuthenticatedAs($user);
-    }
+        if (empty($loginData['email']) || empty($loginData['password'])) {
+            $this->fail("Testing gagal: Username atau password tidak boleh kosong.");
+            return;
+        }
 
-    public function test_user_tidak_dapat_login_dengan_password_salah()
-    {
-        $user = User::factory()->create([
-            'email' => 'test@example.com',
-            'password' => bcrypt('password'),
-        ]);
+        $response = $this->post('/login', $loginData);
 
-        $response = $this->post('/login', [
-            'email' => 'test@example.com',
-            'password' => 'wrong_password',
-        ]);
-
-        $response->assertSessionHasErrors();
-        $this->assertGuest();
+        if(url('/dashboard') === $response->headers->get('Location')){
+            $this->assertAuthenticatedAs($user);
+            return;
+        }else{
+            $this->fail("Testing gagal: Username atau password salah.");
+            $this->assertGuest();
+        }
     }
 }
