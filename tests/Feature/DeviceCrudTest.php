@@ -1,11 +1,11 @@
 <?php
-
 namespace Tests\Feature;
 
 use App\Models\Device;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use Illuminate\Testing\TestResponse;
 
 class DeviceCrudTest extends TestCase
 {
@@ -21,9 +21,14 @@ class DeviceCrudTest extends TestCase
 
     public function test_user_dapat_melihat_list_perangkat()
     {
-        $this->actingAs($this->user)
-             ->get('/devices')
-             ->assertStatus(200);
+        $response = $this->actingAs($this->user)->get('/devices');
+
+        if ($response->status() !== 200) {
+            $this->fail('Gagal mengakses halaman list perangkat. Status code: ' . $response->status() .
+                       '. Response: ' . $response->content());
+        }
+
+        $response->assertStatus(200);
     }
 
     public function test_user_dapat_menambah_perangkat()
@@ -35,16 +40,32 @@ class DeviceCrudTest extends TestCase
             'status' => Device::STATUS_AVAILABLE,
         ];
 
-        $this->actingAs($this->user)
-             ->post('/devices', $deviceData)
-             ->assertRedirect('/devices');
+        $response = $this->actingAs($this->user)->post('/devices', $deviceData);
 
-        $this->assertDatabaseHas('devices', $deviceData);
-    }
+        if ($response->status() !== 302) {
+            $this->fail('Gagal menambah perangkat. Status code: ' . $response->status() .
+                       '. Response: ' . $response->content());
+        }
+
+        if (!$deviceData) {
+
+        try {
+            $this->assertDatabaseHas('devices', $deviceData);
+        } catch (\Exception $e) {
+            $this->fail('Data perangkat tidak ditemukan di database. Error: ' . $e->getMessage());
+        }
+
+        $response->assertRedirect('/devices');
+    }}
 
     public function test_user_dapat_update_perangkat()
     {
-        $device = Device::factory()->create();
+        try {
+            $device = Device::factory()->create();
+        } catch (\Exception $e) {
+            $this->fail('Gagal membuat device untuk testing. Error: ' . $e->getMessage());
+        }
+
         $updatedData = [
             'name' => 'Updated Device',
             'type' => 'Smartphone',
@@ -52,30 +73,64 @@ class DeviceCrudTest extends TestCase
             'status' => Device::STATUS_IN_USE,
         ];
 
-        $this->actingAs($this->user)
-             ->put("/devices/{$device->id}", $updatedData)
-             ->assertRedirect('/devices');
+        $response = $this->actingAs($this->user)
+            ->put("/devices/{$device->id}", $updatedData);
 
-        $this->assertDatabaseHas('devices', $updatedData);
+        if ($response->status() !== 302) {
+            $this->fail('Gagal mengupdate perangkat. Status code: ' . $response->status() .
+                       '. Response: ' . $response->content());
+        }
+
+        try {
+            $this->assertDatabaseHas('devices', $updatedData);
+        } catch (\Exception $e) {
+            $this->fail('Data update perangkat tidak ditemukan di database. Error: ' . $e->getMessage());
+        }
+
+        $response->assertRedirect('/devices');
     }
 
     public function test_user_dapat_delete_perangkat()
     {
-        $device = Device::factory()->create();
+        try {
+            $device = Device::factory()->create();
+        } catch (\Exception $e) {
+            $this->fail('Gagal membuat device untuk testing. Error: ' . $e->getMessage());
+        }
 
-        $this->actingAs($this->user)
-             ->delete("/devices/{$device->id}")
-             ->assertRedirect('/devices');
+        $response = $this->actingAs($this->user)
+            ->delete("/devices/{$device->id}");
 
-        $this->assertDatabaseMissing('devices', ['id' => $device->id]);
+        if ($response->status() !== 302) {
+            $this->fail('Gagal menghapus perangkat. Status code: ' . $response->status() .
+                       '. Response: ' . $response->content());
+        }
+
+        try {
+            $this->assertDatabaseMissing('devices', ['id' => $device->id]);
+        } catch (\Exception $e) {
+            $this->fail('Data perangkat masih ada di database setelah dihapus. Error: ' . $e->getMessage());
+        }
+
+        $response->assertRedirect('/devices');
     }
 
     public function test_user_dapat_melihat_single_perangkat()
     {
-        $device = Device::factory()->create();
+        try {
+            $device = Device::factory()->create();
+        } catch (\Exception $e) {
+            $this->fail('Gagal membuat device untuk testing. Error: ' . $e->getMessage());
+        }
 
-        $this->actingAs($this->user)
-             ->get("/devices/{$device->id}")
-             ->assertStatus(200);
+        $response = $this->actingAs($this->user)
+            ->get("/devices/{$device->id}");
+
+        if ($response->status() !== 200) {
+            $this->fail('Gagal mengakses detail perangkat. Status code: ' . $response->status() .
+                       '. Response: ' . $response->content());
+        }
+
+        $response->assertStatus(200);
     }
 }

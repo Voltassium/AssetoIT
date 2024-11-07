@@ -25,7 +25,7 @@ class AuthTest extends TestCase
 
         $loginData = [
             'email' => 'test@example.com',
-            'password' => 'passwor',
+            'password' => 'password',
         ];
 
         if (empty($loginData['email']) || empty($loginData['password'])) {
