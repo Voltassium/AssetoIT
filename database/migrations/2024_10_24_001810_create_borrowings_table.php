@@ -14,6 +14,7 @@ return new class extends Migration
             $table->foreignId('device_id')->constrained()->onDelete('cascade');
             $table->date('borrow_date');
             $table->date('return_date')->nullable();
+            $table->date('actual_return_date')->nullable();
             $table->timestamps();
         });
     }

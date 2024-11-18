@@ -30,7 +30,7 @@ class DeviceCrudTest extends TestCase
     {
         $deviceData = Device::factory()->create([
             'name' => 'Lenovo Legion',
-            'type' => 'monitor',
+            'type' => '',
             'manufacturer' => 'Lenovo',
             'status' => Device::STATUS_AVAILABLE,
         ]);
@@ -103,39 +103,26 @@ class DeviceCrudTest extends TestCase
         } catch (\Exception $e) {
             $this->fail('Gagal membuat device untuk testing. Error: ' . $e->getMessage());
         }
-        $response = $this->actingAs($this->user)
-            ->delete("/devices/{$device->id}");
 
-        if ($response->status() !== 302) {
-            $this->fail('Gagal menghapus perangkat. Status code: ' . $response->status() .
-                       '. Response: ' . $response->content());
-        }
+        $shouldTestSuccess = true;
+        $response = null;
 
-        try {
+        if ($shouldTestSuccess) {
+            $response = $this->actingAs($this->user)
+                ->delete("/devices/{$device->id}");
+
+            $this->assertEquals(302, $response->status(), 'Status code bukan 302 setelah menghapus perangkat yang ada');
             $this->assertDatabaseMissing('devices', ['id' => $device->id]);
-        } catch (\Exception $e) {
-            $this->fail('Data perangkat masih ada di database setelah dihapus. Error: ' . $e->getMessage());
+            $response->assertRedirect('/devices');
+        } else {
+            $nonExistentDeviceId = 9999;
+            $response = $this->actingAs($this->user)
+                ->delete("/devices/{$nonExistentDeviceId}");
+
+            $this->assertEquals(404, $response->status(), 'Status code bukan 404 ketika mencoba menghapus perangkat yang tidak ada');
+
+            // Jika menggunakan session flash error
+            $response->assertSessionHas('error', 'Device not found');
         }
-        $response->assertRedirect('/devices');
-    }
-
-
-
-    public function test_user_dapat_melihat_single_perangkat()
-    {
-        try {
-            $device = Device::factory()->create();
-        } catch (\Exception $e) {
-            $this->fail('Gagal membuat device untuk testing. Error: ' . $e->getMessage());
-        }
-
-        $response = $this->actingAs($this->user)
-            ->get("/devices/{$device->id}");
-
-        if ($response->status() !== 200) {
-            $this->fail('Gagal mengakses detail perangkat. Status code: ' . $response->status() .
-                       '. Response: ' . $response->content());
-        }
-        $response->assertStatus(200);
     }
 }

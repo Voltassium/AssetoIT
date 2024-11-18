@@ -3,20 +3,31 @@
 namespace App\Http\Controllers;
 
 use App\Models\Borrowing;
+use App\Models\Device;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class BorrowingController extends Controller
 {
     public function index()
     {
-        $borrowings = Borrowing::with(['user', 'device'])->get();
-        return Inertia::render('Borrowing/Index', ['borrowings' => $borrowings]);
+        $borrowings = Borrowing::with(['user', 'device'])
+            ->latest()
+            ->paginate(10);
+
+        return Inertia::render('Borrowings/Index', [
+            'borrowings' => $borrowings
+        ]);
     }
 
     public function create()
     {
-        return Inertia::render('Borrowing/Create');
+        return Inertia::render('Borrowings/Create', [
+            'devices' => Device::where('status', 'available')->get(),
+            'users' => User::all()
+        ]);
     }
 
     public function store(Request $request)
@@ -25,41 +36,42 @@ class BorrowingController extends Controller
             'user_id' => 'required|exists:users,id',
             'device_id' => 'required|exists:devices,id',
             'borrow_date' => 'required|date',
-            'return_date' => 'nullable|date|after:borrow_date',
+            'return_date' => 'required|date|after:borrow_date',
         ]);
 
-        Borrowing::create($validated);
+        DB::transaction(function () use ($validated) {
+            Borrowing::create($validated);
+            Device::where('id', $validated['device_id'])
+                ->update(['status' => Device::STATUS_IN_USE]);
+        });
 
-        return redirect()->route('borrowing.index');
+        return redirect()->route('borrowings.index')
+            ->with('message', 'Peminjaman Berhasil.');
     }
 
     public function show(Borrowing $borrowing)
     {
-        return Inertia::render('Borrowing/Show', ['borrowing' => $borrowing->load(['user', 'device'])]);
+        $borrowing->load(['user', 'device']);
+
+        return Inertia::render('Borrowings/Show', [
+            'borrowing' => $borrowing
+        ]);
     }
 
-    public function edit(Borrowing $borrowing)
+    public function return(Borrowing $borrowing)
     {
-        return Inertia::render('Borrowing/Edit', ['borrowing' => $borrowing->load(['user', 'device'])]);
-    }
+    DB::transaction(function () use ($borrowing) {
 
-    public function update(Request $request, Borrowing $borrowing)
-    {
-        $validated = $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'device_id' => 'required|exists:devices,id',
-            'borrow_date' => 'required|date',
-            'return_date' => 'nullable|date|after:borrow_date',
+        $borrowing->update([
+            'actual_return_date' => now()
         ]);
 
-        $borrowing->update($validated);
+        $borrowing->device->update([
+            'status' => Device::STATUS_AVAILABLE
+        ]);
+    });
 
-        return redirect()->route('borrowing.index');
-    }
-
-    public function destroy(Borrowing $borrowing)
-    {
-        $borrowing->delete();
-        return redirect()->route('borrowing.index');
+    return redirect()->back()
+        ->with('message', 'Perangkat berhasil dikembalikan.');
     }
 }

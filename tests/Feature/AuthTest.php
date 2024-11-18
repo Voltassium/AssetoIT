@@ -24,7 +24,7 @@ class AuthTest extends TestCase
         ]);
 
         $loginData = [
-            'email' => 'test@example.com',
+            'email' => 'test@.com',
             'password' => 'password',
         ];
 

@@ -11,7 +11,7 @@ const props = defineProps({
 const form = useForm({});
 
 const deleteDevice = (id) => {
-    if (confirm('Are you sure you want to delete this device?')) {
+    if (confirm('Apakah anda yakin ingin menghapus akun ini?')) {
         form.delete(route('devices.destroy', id));
     }
 };

@@ -15,6 +15,7 @@ class Borrowing extends Model
         'device_id',
         'borrow_date',
         'return_date',
+        'actual_return_date',
     ];
     /**
      * The attributes that should be cast.
@@ -24,6 +25,7 @@ class Borrowing extends Model
     protected $casts = [
         'borrow_date' => 'date',
         'return_date' => 'date',
+        'actual_return_date' => 'date',
     ];
     /**
      * Get the user who borrowed the device.
@@ -44,7 +46,7 @@ class Borrowing extends Model
      */
     public function isReturned()
     {
-        return !is_null($this->return_date);
+        return !is_null($this->actual_return_date);
     }
     /**
      * Calculate the duration of the borrowing in days

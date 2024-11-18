@@ -9,6 +9,7 @@ class DashboardController extends Controller
     public function index()
     {
         // Dummy Data Sementara
+        /*
         $stats = [
             'availableDevices' => 150,
             'damagedDevices' => 12,
@@ -16,9 +17,9 @@ class DashboardController extends Controller
             'totalUsers' => 200,
             'recentBorrowings' => [],
             'recentDevices' => [],
-        ];
+        ];*/
 
-        /*
+
         $stats = [
             'availableDevices' => Device::where('status', 'available')->count(),
             'damagedDevices' => Device::where('status', 'damaged')->count(),
@@ -33,7 +34,7 @@ class DashboardController extends Controller
                 ->take(5)
                 ->get(),
         ];
-        */
+
         return Inertia::render('Dashboard', compact('stats'));
     }
 }

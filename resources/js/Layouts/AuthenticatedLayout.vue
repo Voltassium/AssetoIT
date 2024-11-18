@@ -127,6 +127,10 @@ const toggleSidebar = () => {
                             :class="{ 'bg-gray-700': route().current('users.index') }">
                         Manajemen User
                         </Link>
+                        <Link :href="route('borrowings.index')" class="block py-2 px-4 hover:bg-gray-700"
+                            :class="{ 'bg-gray-700': route().current('borrowings.index') }">
+                        Peminjaman
+                        </Link>
                     </nav>
                 </aside>
 

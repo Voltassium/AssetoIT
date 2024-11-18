@@ -84,8 +84,7 @@ class Device extends Model
     public function getCurrentBorrowing()
     {
         return $this->borrowings()
-            ->
-whereNull('return_date')
+            ->whereNull('return_date')
             ->latest('borrow_date')
             ->first();
     }
