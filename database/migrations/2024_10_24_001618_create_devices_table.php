@@ -13,6 +13,8 @@ return new class extends Migration
             $table->string('name');
             $table->string('type');
             $table->string('manufacturer');
+            $table->text('specifications')->nullable(); // Add specs
+        $table->integer('count')->default(1); // Add count
             $table->enum('status', ['available', 'in_use', 'damaged']);
             $table->timestamps();
         });

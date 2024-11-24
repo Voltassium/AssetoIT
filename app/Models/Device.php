@@ -2,6 +2,8 @@
 namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
+
 class Device extends Model
 {
     use HasFactory;
@@ -14,6 +16,8 @@ class Device extends Model
         'name',
         'type',
         'manufacturer',
+        'specifications',
+        'count',
         'status',
     ];
     /**
@@ -23,6 +27,8 @@ class Device extends Model
      */
     protected $casts = [
         'status' => 'string',
+        'specifications' => 'array',
+        'count' => 'integer',
     ];
     /**
      * Status constants
@@ -87,5 +93,32 @@ class Device extends Model
             ->whereNull('return_date')
             ->latest('borrow_date')
             ->first();
+    }
+
+    public function scopeFilter(Builder $query, array $filters)
+    {
+        $query->when($filters['search'] ?? null, function ($query, $search) {
+            $query->where(function ($query) use ($search) {
+                $query->where('name', 'like', "%{$search}%")
+                    ->orWhere('type', 'like', "%{$search}%")
+                    ->orWhere('manufacturer', 'like', "%{$search}%");
+            });
+        });
+
+        $query->when($filters['type'] ?? null, function ($query, $type) {
+            $query->where('type', $type);
+        });
+
+        $query->when($filters['status'] ?? null, function ($query, $status) {
+            $query->where('status', $status);
+        });
+    }
+
+    public function scopeSort(Builder $query, array $sort)
+    {
+        $field = $sort['sort_field'] ?? 'name';
+        $direction = $sort['sort_direction'] ?? 'asc';
+
+        $query->orderBy($field, $direction);
     }
 }

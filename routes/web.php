@@ -30,14 +30,17 @@ Route::get('/', function () {
 
 // Admin only routes - ensure both auth and admin role
 Route::middleware(['auth', 'verified'])->group(function(){
-    // Dashboard access
+    // Dashboard access for all users
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
 
-    // Device management - restricted to admin only
-    Route::resource('devices', DeviceController::class);
-    Route::get('/damaged-devices', [DeviceController::class, 'damagedDevices'])->name('damaged-devices');
+    // Devices routes - index only for users, full access for admin
+    Route::get('/devices', [DeviceController::class, 'index'])->name('devices.index');
+
+    // Admin only device management routesRoute::middleware(['admin'])->group(function() {
+        Route::resource('devices', DeviceController::class)->except(['index']);
+        Route::get('/damaged-devices', [DeviceController::class, 'damagedDevices'])->name('damaged-devices');
 });
 
 // Regular authenticated user routes - access for all authenticated users

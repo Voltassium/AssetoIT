@@ -115,19 +115,30 @@ const toggleSidebar = () => {
                 <!-- Sidebar -->
                 <aside v-show="showingSidebar" class="w-64 bg-gray-800 text-white min-h-screen">
                     <nav class="mt-5">
-                        <Link :href="route('dashboard')" class="block py-2 px-4 hover:bg-gray-700"
+                        <Link
+                        v-if="$page.props.auth.user.role === 'admin'"
+                        :href="route('dashboard')" class="block py-2 px-4 hover:bg-gray-700"
                             :class="{ 'bg-gray-700': route().current('dashboard') }">
                         Dashboard
                         </Link>
-                        <Link :href="route('devices.index')" class="block py-2 px-4 hover:bg-gray-700"
+                        <Link
+                            :href="route('devices.index')"
+                            class="block py-2 px-4 hover:bg-gray-700"
                             :class="{ 'bg-gray-700': route().current('devices.index') }">
-                        List Perangkat
+                            List Perangkat
                         </Link>
-                        <Link :href="route('users.index')" class="block py-2 px-4 hover:bg-gray-700"
-                            :class="{ 'bg-gray-700': route().current('users.index') }">
-                        Manajemen User
-                        </Link>
-                        <Link :href="route('borrowings.index')" class="block py-2 px-4 hover:bg-gray-700"
+
+                        <!-- Only show management links for admin -->
+                        <template v-if="$page.props.auth.user.role === 'admin'">
+                            <Link
+                                :href="route('users.index')"
+                                class="block py-2 px-4 hover:bg-gray-700"
+                                :class="{ 'bg-gray-700': route().current('users.index') }">
+                                Manajemen User
+                            </Link>
+                        </template>
+                        <Link
+                        :href="route('borrowings.index')" class="block py-2 px-4 hover:bg-gray-700"
                             :class="{ 'bg-gray-700': route().current('borrowings.index') }">
                         Peminjaman
                         </Link>

@@ -10,6 +10,8 @@ const form = useForm({
     name: '',
     type: '',
     manufacturer: '',
+    specifications: '',
+    count: 1,
     status: '',
 });
 
@@ -48,6 +50,31 @@ function submit() {
                                     Vendor
                                 </label>
                                 <input v-model="form.manufacturer" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="manufacturer" type="text" placeholder="Manufacturer">
+                            </div>
+                            <div class="mb-4">
+                                <label class="block text-gray-700 text-sm font-bold mb-2" for="specifications">
+                                    Spesifikasi
+                                </label>
+                                <textarea
+                                    v-model="form.specifications"
+                                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                    id="specifications"
+                                    placeholder="Masukkan spesifikasi perangkat"
+                                    rows="3"
+                                ></textarea>
+                            </div>
+                            <div class="mb-4">
+                                <label class="block text-gray-700 text-sm font-bold mb-2" for="count">
+                                    Jumlah
+                                </label>
+                                <input
+                                    v-model="form.count"
+                                    type="number"
+                                    min="1"
+                                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                    id="count"
+                                    placeholder="Jumlah perangkat"
+                                >
                             </div>
                             <div class="mb-4">
                                 <label class="block text-gray-700 text-sm font-bold mb-2" for="status">

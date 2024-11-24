@@ -4,20 +4,31 @@ namespace App\Http\Controllers;
 
 use App\Models\Device;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 
 class DeviceController extends Controller
 {
     public function index()
     {
-        $devices = Device::query()
-            ->select('id', 'name', 'type', 'manufacturer', 'status')
-            ->orderBy('name')
-            ->paginate(10);
-
         return Inertia::render('Devices/Index', [
-            'devices' => $devices
+            'devices' => Device::query()
+                ->filter(request(['search', 'type', 'status']))
+                ->sort(request(['sort_field', 'sort_direction']))
+                ->with('borrowings')
+                ->paginate(10)
+                ->withQueryString(),
+
+            'filters' => request()->only(['search', 'type', 'status', 'sort_field', 'sort_direction']),
+            'types' => $this->getDeviceTypes()
         ]);
+    }
+
+    private function getDeviceTypes()
+    {
+        return Cache::remember('device_types', now()->addHour(), function() {
+            return Device::distinct('type')->pluck('type');
+        });
     }
 
     public function create()
@@ -33,12 +44,25 @@ class DeviceController extends Controller
             'name' => 'required|string|max:255',
             'type' => 'required|string|max:255',
             'manufacturer' => 'required|string|max:255',
+            'specifications' => 'nullable|string',
+            'count' => 'required|integer|min:1',
             'status' => 'required|in:' . implode(',', Device::getStatusOptions()),
         ]);
 
-        Device::create($validated);
+        // Create multiple devices based on count
+        for ($i = 0; $i < $validated['count']; $i++) {
+            Device::create([
+                'name' => $validated['name'],
+                'type' => $validated['type'],
+                'manufacturer' => $validated['manufacturer'],
+                'specifications' => $validated['specifications'],
+                'count' => 1, // Each record represents one device
+                'status' => $validated['status'],
+            ]);
+        }
 
-        return redirect()->route('devices.index')->with('message', 'Device created successfully.');
+        return redirect()->route('devices.index')
+            ->with('message', 'Perangkat Berhasil Ditambahkan.');
     }
 
     public function show(Device $device)

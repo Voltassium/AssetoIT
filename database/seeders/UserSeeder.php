@@ -40,12 +40,32 @@ class UserSeeder extends Seeder
             'role' => 'user',
         ]);
 
-        // Create additional regular users
-        User::factory()
-            ->count(5)
-            ->state(function (array $attributes) {
-                return ['role' => 'user'];
-            })
-            ->create();
+        User::create([
+            'name' => 'Andy kasa',
+            'email' => 'andy@gmail.com',
+            'password' => Hash::make('password'),
+            'role' => 'user',
+        ]);
+
+        User::create([
+            'name' => 'Ade Kurniawan',
+            'email' => 'ade@gmail.com',
+            'password' => Hash::make('password'),
+            'role' => 'user',
+        ]);
+
+        User::create([
+            'name' => 'Arindha Rizka',
+            'email' => 'rizka@gmail.com',
+            'password' => Hash::make('password'),
+            'role' => 'user',
+        ]);
+
+        User::create([
+            'name' => 'Arsyad Irfan',
+            'email' => 'irza@gmail.com',
+            'password' => Hash::make('password'),
+            'role' => 'user',
+        ]);
     }
 }
