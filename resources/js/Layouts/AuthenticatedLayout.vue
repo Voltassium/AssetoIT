@@ -116,33 +116,41 @@ const toggleSidebar = () => {
                 <aside v-show="showingSidebar" class="w-64 bg-gray-800 text-white min-h-screen">
                     <nav class="mt-5">
                         <Link
-                        v-if="$page.props.auth.user.role === 'admin'"
-                        :href="route('dashboard')" class="block py-2 px-4 hover:bg-gray-700"
+                            v-if="$page.props.auth.user.role === 'admin'"
+                            :href="route('dashboard')"
+                            class="flex items-center py-2 px-4 hover:bg-gray-700 hover:border-b-2 hover:border-blue-500 transition-all"
                             :class="{ 'bg-gray-700': route().current('dashboard') }">
-                        Dashboard
+                            <img src="../../image/dashboard.png" class="h-5 w-5 mr-3" alt="Dashboard Icon">
+                            Dashboard
                         </Link>
                         <Link
                             :href="route('devices.index')"
-                            class="block py-2 px-4 hover:bg-gray-700"
+                            class="flex items-center py-2 px-4 hover:bg-gray-700 hover:border-b-2 hover:border-blue-500 transition-all"
                             :class="{ 'bg-gray-700': route().current('devices.index') }">
+                            <img src="../../image/device.png" class="h-5 w-5 mr-3" alt="Device Icon">
                             List Perangkat
                         </Link>
 
-                        <!-- Only show management links for admin -->
                         <template v-if="$page.props.auth.user.role === 'admin'">
                             <Link
                                 :href="route('users.index')"
-                                class="block py-2 px-4 hover:bg-gray-700"
+                                class="flex items-center py-2 px-4 hover:bg-gray-700 hover:border-b-2 hover:border-blue-500 transition-all"
                                 :class="{ 'bg-gray-700': route().current('users.index') }">
+                                <img src="../../image/users.png" class="h-5 w-5 mr-3" alt="Users Icon">
                                 Manajemen User
                             </Link>
                         </template>
                         <Link
-                        :href="route('borrowings.index')" class="block py-2 px-4 hover:bg-gray-700"
+                            :href="route('borrowings.index')"
+                            class="flex items-center py-2 px-4 hover:bg-gray-700 hover:border-b-2 hover:border-blue-500 transition-all"
                             :class="{ 'bg-gray-700': route().current('borrowings.index') }">
-                        Peminjaman
+                            <img src="../../image/peminjaman.png" class="h-5 w-5 mr-3" alt="Borrowing Icon">
+                            Peminjaman
                         </Link>
                     </nav>
+
+
+
                 </aside>
 
                 <!-- Main Content -->

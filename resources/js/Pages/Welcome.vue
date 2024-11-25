@@ -9,71 +9,40 @@ defineProps({
     },
 });
 </script>
+
 <template>
     <Head title="Welcome to AssetoIT" />
 
-    <div class="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
-        <!-- Navigation -->
-        <nav class="container mx-auto px-6 py-4">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center">
-                    <!-- Logo -->
-                     <img class="h-8 w-8" src="../../image/Asseto.png" alt="">
-                    <div class="text-2xl font-bold text-gray-800 dark:text-white">
-                        Asseto<span class="text-blue-600">IT</span>
-                    </div>
-                </div>
-                <!-- Navigation Links -->
-                <div class="flex items-center space-x-4">
-                    <template v-if="canLogin">
-                        <Link
-                            v-if="$page.props.auth.user"
-                            :href="route('dashboard')"
-                            class="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 transition">
-                            Dashboard
-                        </Link>
-                        <template v-else>
-                            <Link
-                                :href="route('login')"
-                                class="text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition">
-                                Log in
-                            </Link>
-                            <Link
-                                v-if="canRegister"
-                                :href="route('register')"
-                                class="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 transition">
-                                Register
-                            </Link>
-                        </template>
-                    </template>
-                </div>
-            </div>
-        </nav>
-        <!-- Hero Section -->
-        <div class="container mx-auto px-6 py-16 text-center">
-            <h1 class="mb-4 text-4xl font-bold text-gray-900 dark:text-white sm:text-5xl md:text-6xl">
-                Sistem Inventaris D3 Teknik Informatika
-            </h1>
-        </div>
-        <!-- Features Section -->
+    <div class="relative min-h-screen bg-white ">
+        <!-- Background Video -->
+        <video
+            autoplay
+            loop
+            muted
+            playsinline
+            class="absolute top-[5%] left-[25%] w-auto h-auto max-w-[75%] max-h-[75%] z-[1] object-cover mx-auto my-auto"
+        >
+            <source src="../../image/homeBG.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+        </video>
 
-        <div id="features" class="bg-gray-50 dark:bg-gray-800 py-16">
-            <div class="container mx-auto px-6">
-                <h2 class="mb-12 text-center text-3xl font-bold text-gray-900 dark:text-white">
-                    Feature
-                </h2>
-                <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-2">
-                    <div class="rounded-lg bg-white p-6 shadow-md dark:bg-gray-700">
-                        <h3 class="mb-3 text-xl font-semibold text-gray-900 dark:text-white">Asset Tracking</h3>
-                        <p class="text-gray-600 dark:text-gray-300">Lihat Status Perangkat dimana Saja!</p>
-                    </div>
-                    <div class="rounded-lg bg-white p-6 shadow-md dark:bg-gray-700">
-                        <h3 class="mb-3 text-xl font-semibold text-gray-900 dark:text-white">Pelaporan</h3>
-                        <p class="text-gray-600 dark:text-gray-300">Mencetak Laporan perangkat dengan akurat dan cepat!</p>
-                    </div>
-                </div>
+        <!-- Hero Section -->
+        <div class="container relative mx-auto px-6 py-16 flex flex-col justify-center z-[10] h-[calc(100vh-72px)]">
+            <div class="max-w-lg">
+                <h1 class="mb-6 text-5xl font-black text-bold text-left text-black">
+                    Get More Done with AssetoIT
+                </h1>
+                <p class="mb-8 text-lg text-left text-black ">
+                    Sistem untuk mempermudah pemantauan dan peminjaman perangkat IT di D3 Teknik Informatika Universitas Sebelas Maret.
+                </p>
+                <a href="/login">
+                <button class="bg-[#101540] text-white px-6 py-3 rounded-lg font-medium shadow-md hover:bg-gray-800">
+                    Get Started ->
+                </button>
+                </a>
             </div>
         </div>
+
         <!-- Footer -->
         <footer class="bg-gray-100 dark:bg-gray-900 py-8">
             <div class="container mx-auto px-6 text-center">

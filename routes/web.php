@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DeviceController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\BorrowingController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -31,9 +32,7 @@ Route::get('/', function () {
 // Admin only routes - ensure both auth and admin role
 Route::middleware(['auth', 'verified'])->group(function(){
     // Dashboard access for all users
-    Route::get('/dashboard', function () {
-        return Inertia::render('Dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Devices routes - index only for users, full access for admin
     Route::get('/devices', [DeviceController::class, 'index'])->name('devices.index');

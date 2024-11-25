@@ -21,20 +21,21 @@ class DashboardController extends Controller
 
 
         $stats = [
-            'availableDevices' => Device::where('status', 'available')->count(),
-            'damagedDevices' => Device::where('status', 'damaged')->count(),
-            'activeLoans' => Borrowing::whereNull('return_date')->count(),
-            'totalUsers' => User::count(),
-            'recentBorrowings' => Borrowing::with(['user', 'device'])
-                ->whereNull('return_date')
-                ->latest()
-                ->take(5)
-                ->get(),
-            'recentDevices' => Device::latest()
-                ->take(5)
-                ->get(),
-        ];
+                'availableDevices' => Device::where('status', 'available')->count(),
+                'damagedDevices' => Device::where('status', 'damaged')->count(),
+                'activeLoans' => Borrowing::whereNull('return_date')->count(),
+                'totalUsers' => User::count(),
+                'recentBorrowings' => Borrowing::with(['user', 'device'])
+                    ->whereNull('return_date')
+                    ->latest()
+                    ->take(5)
+                    ->get(),
+                'recentDevices' => Device::latest()
+                    ->take(5)
+                    ->get(),
+            ];
 
-        return Inertia::render('Dashboard', compact('stats'));
+
+            return Inertia::render('Dashboard', compact('stats'));
     }
 }

@@ -1,21 +1,35 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, Link } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { Head } from '@inertiajs/vue3';
+import { ref, onMounted } from 'vue';
 
-// Data states
+const props = defineProps({
+    stats: {
+        type: Object,
+        required: true,  
+    },
+});
+
+
 const isLoading = ref(true);
 const availableDevices = ref(0);
 const activeLoans = ref(0);
 const totalUsers = ref(0);
 
-// Simulate loading data
-setTimeout(() => {
-    availableDevices.value = 150;
-    activeLoans.value = 45;
-    totalUsers.value = 200;
-    isLoading.value = false;
-}, 500);
+onMounted(() => {
+    console.log('Stats received in props:', props.stats);
+    
+    if (props.stats) {
+        availableDevices.value = props.stats.availableDevices ?? 0;
+        activeLoans.value = props.stats.activeLoans ?? 0;
+        totalUsers.value = props.stats.totalUsers ?? 0;
+        isLoading.value = false;
+    } else {
+        console.error('Props.stats is undefined or null.');
+    }
+});
+
+
 </script>
 
 <template>
