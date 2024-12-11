@@ -13,31 +13,45 @@ class BorrowingController extends Controller
 {
     public function index()
     {
-        $borrowings = Borrowing::with(['user', 'device'])
-            ->latest()
-            ->paginate(10);
+        $user = auth()->user();
+
+        // If user is admin, show all borrowings
+        if ($user->isAdmin()) {
+            $borrowings = Borrowing::with(['user', 'device'])
+                ->latest()
+                ->paginate(10);
+        }
+        // If regular user, show only their borrowings
+        else {
+            $borrowings = Borrowing::with(['user', 'device'])
+                ->where('user_id', $user->id)
+                ->latest()
+                ->paginate(10);
+        }
 
         return Inertia::render('Borrowings/Index', [
-            'borrowings' => $borrowings
+            'borrowings' => $borrowings,
+            'isAdmin' => $user->isAdmin()
         ]);
     }
 
     public function create()
     {
         return Inertia::render('Borrowings/Create', [
-            'devices' => Device::where('status', 'available')->get(),
-            'users' => User::all()
+            'devices' => Device::where('status', 'available')->get()
         ]);
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'user_id' => 'required|exists:users,id',
             'device_id' => 'required|exists:devices,id',
             'borrow_date' => 'required|date',
             'return_date' => 'required|date|after:borrow_date',
         ]);
+
+        // Add authenticated user's ID
+        $validated['user_id'] = auth()->id();
 
         DB::transaction(function () use ($validated) {
             Borrowing::create($validated);

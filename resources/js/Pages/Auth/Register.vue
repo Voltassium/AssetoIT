@@ -9,6 +9,7 @@ import { Head, Link, useForm } from '@inertiajs/vue3';
 
 const form = useForm({
     name: '',
+    nim: '',
     email: '',
     password: '',
     password_confirmation: '',
@@ -52,6 +53,21 @@ const submit = () => {
                             autocomplete="name"
                         />
                         <InputError class="mt-2" :message="form.errors.name" />
+                    </div>
+                    <!-- NIM -->
+                    <div>
+                        <InputLabel for="nim" value="Nim*" />
+                        <TextInput
+                            id="nim"
+                            type="text"
+                            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                            v-model="form.nim"
+                            placeholder="Enter your NIM"
+                            required
+                            autofocus
+                            autocomplete="nim"
+                        />
+                        <InputError class="mt-2" :message="form.errors.nim" />
                     </div>
 
                     <!-- Email -->

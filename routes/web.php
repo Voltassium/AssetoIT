@@ -36,8 +36,11 @@ Route::middleware(['auth', 'verified'])->group(function(){
 
     // Devices routes - index only for users, full access for admin
     Route::get('/devices', [DeviceController::class, 'index'])->name('devices.index');
+    Route::patch('/users/{user}/toggle-active', [UserController::class, 'toggleActive'])
+    ->name('users.toggle-active');
 
-    // Admin only device management routesRoute::middleware(['admin'])->group(function() {
+    // Admin only device management routes
+    // Route::middleware(['admin'])->group(function() {
         Route::resource('devices', DeviceController::class)->except(['index']);
         Route::get('/damaged-devices', [DeviceController::class, 'damagedDevices'])->name('damaged-devices');
 });
@@ -46,6 +49,8 @@ Route::middleware(['auth', 'verified'])->group(function(){
 Route::middleware(['auth', 'verified'])->group(function () {
     // Users
     Route::resource('users', UserController::class);
+    Route::patch('/users/{user}/toggle-active', [UserController::class, 'toggleActive'])
+        ->name('users.toggle-active');
 
     // Profile routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

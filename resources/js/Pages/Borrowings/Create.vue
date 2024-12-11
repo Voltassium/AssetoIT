@@ -4,11 +4,9 @@ import { Head, useForm } from '@inertiajs/vue3';
 
 const props = defineProps({
     devices: Array,
-    users: Array,
 });
 
 const form = useForm({
-    user_id: '',
     device_id: '',
     borrow_date: new Date().toISOString().substr(0, 10),
     return_date: ''
@@ -19,7 +17,7 @@ const submit = () => {
 };
 
 const calculateMinReturn = () => {
-    return form.borrow_date; // Minimum return date is the borrow date
+    return form.borrow_date;
 };
 </script>
 
@@ -36,20 +34,6 @@ const calculateMinReturn = () => {
                 <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                     <div class="p-6 text-gray-900">
                         <form @submit.prevent="submit" class="space-y-6">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700">User</label>
-                                <select v-model="form.user_id"
-                                        class="mt-1 block w-full rounded-md border-gray-300">
-                                    <option value="">Pilih User</option>
-                                    <option v-for="user in users" :key="user.id" :value="user.id">
-                                        {{ user.name }}
-                                    </option>
-                                </select>
-                                <div v-if="form.errors.user_id" class="mt-1 text-sm text-red-600">
-                                    {{ form.errors.user_id }}
-                                </div>
-                            </div>
-
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Perangkat</label>
                                 <select v-model="form.device_id"

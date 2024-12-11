@@ -7,8 +7,14 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 
 const props = defineProps({
-    device: Object,
-    statusOptions: Array,
+    device: {
+        type: Object,
+        required: true
+    },
+    statusOptions: {
+        type: Array,
+        required: true
+    }
 });
 
 const form = useForm({
@@ -21,9 +27,15 @@ const form = useForm({
 
 function submit() {
     form.put(route('devices.update', props.device.id), {
+        preserveScroll: true,
         onSuccess: () => {
-            // Optional: Show success message
+            form.reset();
         },
+        onError: (errors) => {
+            if (Object.keys(errors).length === 0) {
+                console.error('An unexpected error occurred');
+            }
+        }
     });
 }
 </script>
@@ -34,10 +46,10 @@ function submit() {
     <AuthenticatedLayout>
         <template #header>
             <div class="flex justify-between items-center">
-                <h2 class="font-semibold text-xl text-gray-800 leading-tight">Edit Perangkat</h2>
+                <h2 class="font-semibold text-xl text-gray-800">Edit Perangkat</h2>
                 <Link
                     :href="route('devices.index')"
-                    class="px-3 py-2 text-sm bg-gray-200 hover:bg-gray-300 rounded-lg transition duration-150 ease-in-out"
+                    class="px-3 py-2 text-sm bg-gray-200 hover:bg-gray-300 rounded-lg"
                 >
                     Kembali
                 </Link>
@@ -47,7 +59,7 @@ function submit() {
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 bg-white border-b border-gray-200">
+                    <div class="p-6">
                         <form @submit.prevent="submit" class="max-w-xl space-y-6">
                             <div>
                                 <InputLabel for="name" value="Nama Perangkat" />
@@ -93,7 +105,6 @@ function submit() {
                                 <textarea
                                     id="specifications"
                                     v-model="form.specifications"
-                                    rows="4"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                                     :disabled="form.processing"
                                 ></textarea>
@@ -105,7 +116,7 @@ function submit() {
                                 <select
                                     id="status"
                                     v-model="form.status"
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
                                     required
                                     :disabled="form.processing"
                                 >

@@ -86,12 +86,21 @@ class DeviceController extends Controller
             'name' => 'required|string|max:255',
             'type' => 'required|string|max:255',
             'manufacturer' => 'required|string|max:255',
+            'specifications' => 'nullable|string',
             'status' => 'required|in:' . implode(',', Device::getStatusOptions()),
         ]);
 
-        $device->update($validated);
+        try {
+            $device->update($validated);
 
-        return redirect()->route('devices.index')->with('message', 'Device updated successfully.');
+            return redirect()
+                ->route('devices.index')
+                ->with('message', 'Perangkat berhasil diperbarui.');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->withErrors(['error' => 'Terjadi kesalahan saat memperbarui perangkat.']);
+        }
     }
 
     public function destroy(Device $device)

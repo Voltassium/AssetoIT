@@ -3,35 +3,249 @@ namespace Database\Seeders;
 use App\Models\Device;
 use Illuminate\Database\Seeder;
 
+
 class DeviceSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
-    public function run(int $count = 20)
+    public function run(): void
     {
-        // Create devices with specific types to ensure good distribution
-        $deviceTypes = ['Keyboard', 'Monitor', 'Mouse'];
-        $perType = ceil($count / 3);
+        Device::create([
+            'name' => 'Router board - Mikrotik',
+            'type' => 'router',
+            'manufacturer' => 'Mikrotik',
+            'specifications' => 'description',
+            'status' => Device::STATUS_AVAILABLE,
+        ]);
 
-        foreach ($deviceTypes as $type) {
-            Device::factory()
-                ->count($perType)
-                ->state(function (array $attributes) use ($type) {
-                    return [
-                        'type' => $type,
-                        // Ensure more devices are available than other statuses
-                        'status' => fake()->randomElement([
-                            Device::STATUS_AVAILABLE,
-                            Device::STATUS_AVAILABLE,
-                            Device::STATUS_IN_USE,
-                            Device::STATUS_DAMAGED,
-                        ])
-                    ];
-                })
-                ->create();
-        }
+        Device::create([
+            'name' => 'Router board - Mikrotik',
+            'type' => 'router',
+            'manufacturer' => 'Mikrotik',
+            'specifications' => 'description',
+            'status' => Device::STATUS_AVAILABLE,
+        ]);
+
+        Device::create([
+            'name' => 'Router board - Mikrotik',
+            'type' => 'router',
+            'manufacturer' => 'Mikrotik',
+            'specifications' => 'description',
+            'status' => Device::STATUS_AVAILABLE,
+        ]);
+
+        Device::create([
+            'name' => 'Router board - Mikrotik',
+            'type' => 'router',
+            'manufacturer' => 'Mikrotik',
+            'specifications' => 'description',
+            'status' => Device::STATUS_AVAILABLE,
+        ]);
+
+        Device::create([
+            'name' => 'Omni barcode Scanner',
+            'type' => 'scanner',
+            'manufacturer' => '-',
+            'specifications' => 'description',
+            'status' => Device::STATUS_AVAILABLE,
+        ]);
+
+        Device::create([
+            'name' => 'Omni barcode Scanner',
+            'type' => 'scanner',
+            'manufacturer' => '-',
+            'specifications' => 'description',
+            'status' => Device::STATUS_AVAILABLE,
+        ]);
+
+        Device::create([
+            'name' => 'KAT Loco S - Next Gen VR Locomotion System',
+            'type' => 'VR accessory',
+            'manufacturer' => 'KAT VR',
+            'specifications' => 'description',
+            'status' => Device::STATUS_AVAILABLE,
+        ]);
+
+        Device::create([
+            'name' => 'BRACKET TV STANDING Portable',
+            'type' => 'TV bracket',
+            'manufacturer' => '-',
+            'specifications' => 'description',
+            'status' => Device::STATUS_AVAILABLE,
+        ]);
+
+        Device::create([
+            'name' => 'BRACKET TV STANDING Portable',
+            'type' => 'TV bracket',
+            'manufacturer' => '-',
+            'specifications' => 'description',
+            'status' => Device::STATUS_AVAILABLE,
+        ]);
+
+        Device::create([
+            'name' => 'Event Desk/Booth portable Custom',
+            'type' => 'TV bracket',
+            'manufacturer' => '-',
+            'specifications' => 'description',
+            'status' => Device::STATUS_AVAILABLE,
+        ]);
+
+        Device::create([
+            'name' => 'Lemari Sliding Kaca Chitose Chiba SL-1830 G Lemari Arsip Kanto',
+            'type' => 'Lemari',
+            'manufacturer' => 'Chitose',
+            'specifications' => 'description',
+            'status' => Device::STATUS_AVAILABLE,
+        ]);
+
+        Device::create([
+            'name' => 'Lemari Sliding Kaca Chitose Chiba SL-1830 G Lemari Arsip Kanto',
+            'type' => 'Lemari',
+            'manufacturer' => 'Chitose',
+            'specifications' => 'description',
+            'status' => Device::STATUS_AVAILABLE,
+        ]);
+
+        Device::create([
+            'name' => 'Layar Tripod Proyektor 100 inchi Projector Screen',
+            'type' => 'Projector Screen',
+            'manufacturer' => '-',
+            'specifications' => 'description',
+            'status' => Device::STATUS_AVAILABLE,
+        ]);
+
+        Device::create([
+            'name' => 'Layar Tripod Proyektor 100 inchi Projector Screen',
+            'type' => 'Projector Screen',
+            'manufacturer' => '-',
+            'specifications' => 'description',
+            'status' => Device::STATUS_AVAILABLE,
+        ]);
+
+        Device::create([
+            'name' => 'Inverter Zelio 900va Luminous Pure Sine Wave UPS',
+            'type' => 'UPS',
+            'manufacturer' => 'Luminous',
+            'specifications' => 'description',
+            'status' => Device::STATUS_AVAILABLE,
+        ]);
+
+        Device::create([
+            'name' => 'Inverter Zelio 900va Luminous Pure Sine Wave UPS',
+            'type' => 'UPS',
+            'manufacturer' => 'Luminous',
+            'specifications' => 'description',
+            'status' => Device::STATUS_AVAILABLE,
+        ]);
+
+        Device::create([
+            'name' => 'Inverter Zelio 900va Luminous Pure Sine Wave UPS',
+            'type' => 'UPS',
+            'manufacturer' => 'Luminous',
+            'specifications' => 'description',
+            'status' => Device::STATUS_AVAILABLE,
+        ]);
+
+        Device::create([
+            'name' => 'Inverter Zelio 900va Luminous Pure Sine Wave UPS',
+            'type' => 'UPS',
+            'manufacturer' => 'Luminous',
+            'specifications' => 'description',
+            'status' => Device::STATUS_AVAILABLE,
+        ]);
+
+        Device::create([
+            'name' => 'Inverter Zelio 900va Luminous Pure Sine Wave UPS',
+            'type' => 'UPS',
+            'manufacturer' => 'Luminous',
+            'specifications' => 'description',
+            'status' => Device::STATUS_AVAILABLE,
+        ]);
+
+        Device::create([
+            'name' => 'Inverter Zelio 900va Luminous Pure Sine Wave UPS',
+            'type' => 'UPS',
+            'manufacturer' => 'Luminous',
+            'specifications' => 'description',
+            'status' => Device::STATUS_AVAILABLE,
+        ]);
+
+        Device::create([
+            'name' => 'Inverter Zelio 900va Luminous Pure Sine Wave UPS',
+            'type' => 'UPS',
+            'manufacturer' => 'Luminous',
+            'specifications' => 'description',
+            'status' => Device::STATUS_AVAILABLE,
+        ]);
+
+        Device::create([
+            'name' => 'Inverter Zelio 900va Luminous Pure Sine Wave UPS',
+            'type' => 'UPS',
+            'manufacturer' => 'Luminous',
+            'specifications' => 'description',
+            'status' => Device::STATUS_AVAILABLE,
+        ]);
+
+        Device::create([
+            'name' => 'Inverter Zelio 900va Luminous Pure Sine Wave UPS',
+            'type' => 'UPS',
+            'manufacturer' => 'Luminous',
+            'specifications' => 'description',
+            'status' => Device::STATUS_AVAILABLE,
+        ]);
+
+        Device::create([
+            'name' => 'Inverter Zelio 900va Luminous Pure Sine Wave UPS',
+            'type' => 'UPS',
+            'manufacturer' => 'Luminous',
+            'specifications' => 'description',
+            'status' => Device::STATUS_AVAILABLE,
+        ]);
+
+        Device::create([
+            'name' => 'HP Smart Tank 519 Wireless Printer (Print Scan Copy)',
+            'type' => 'Printer',
+            'manufacturer' => 'HP',
+            'specifications' => 'description',
+            'status' => Device::STATUS_AVAILABLE,
+        ]);
+
+        Device::create([
+            'name' => 'HP Smart Tank 519 Wireless Printer (Print Scan Copy)',
+            'type' => 'Printer',
+            'manufacturer' => 'HP',
+            'specifications' => 'description',
+            'status' => Device::STATUS_AVAILABLE,
+        ]);
+
+        Device::create([
+            'name' => 'Brother MFC-J3530DW Multifunction Inkjet Print (Scan/ Copy/Duplex + WiFi)',
+            'type' => 'Printer',
+            'manufacturer' => 'Brother',
+            'specifications' => 'description',
+            'status' => Device::STATUS_AVAILABLE,
+        ]);
+
+        Device::create([
+            'name' => 'Brother MFC-J3530DW Multifunction Inkjet Print (Scan/ Copy/Duplex + WiFi)',
+            'type' => 'Printer',
+            'manufacturer' => 'Brother',
+            'specifications' => 'description',
+            'status' => Device::STATUS_AVAILABLE,
+        ]);
+
+        Device::create([
+            'name' => 'WD My Cloud Home 8TB - Hardisk External WD Asli dan Bergarnsi Resmi',
+            'type' => 'Hardisk External',
+            'manufacturer' => 'WD',
+            'specifications' => 'description',
+            'status' => Device::STATUS_AVAILABLE,
+        ]);
+
+        Device::create([
+            'name' => 'WD My Cloud Home 8TB - Hardisk External WD Asli dan Bergarnsi Resmi',
+            'type' => 'Hardisk External',
+            'manufacturer' => 'WD',
+            'specifications' => 'description',
+            'status' => Device::STATUS_AVAILABLE,
+        ]);
     }
 }

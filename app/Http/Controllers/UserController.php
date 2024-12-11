@@ -12,7 +12,7 @@ class UserController extends Controller
     public function index()
     {
         $users = User::query()
-            ->select('id', 'name', 'email', 'created_at')
+            ->select('id', 'name', 'email', 'is_active', 'created_at')
             ->orderBy('name')
             ->paginate(10);
 
@@ -30,12 +30,14 @@ class UserController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'nim' => 'required|string|unique:users,nim|max:20',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
         ]);
 
         User::create([
             'name' => $validated['name'],
+            'nim' => $validated['nim'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
         ]);
@@ -74,5 +76,16 @@ class UserController extends Controller
     {
         $user->delete();
         return redirect()->route('users.index')->with('message', 'User deleted successfully.');
+    }
+
+    public function toggleActive(User $user)
+    {
+        $user->update([
+            'is_active' => !$user->is_active
+        ]);
+
+        return redirect()->back()->with('message',
+            $user->is_active ? 'User activated successfully.' : 'User deactivated successfully.'
+        );
     }
 }

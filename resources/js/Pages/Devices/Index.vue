@@ -12,7 +12,7 @@ const props = defineProps({
     types: Array,
 });
 
-// Reactive state with default values
+// Filter
 const filters = ref({
     search: props.filters?.search || '',
     type: props.filters?.type || '',
@@ -21,7 +21,7 @@ const filters = ref({
     sort_direction: props.filters?.sort_direction || 'asc'
 });
 
-// Status options as constant
+
 const STATUS_OPTIONS = {
     available: { label: 'Available', class: 'bg-green-100 text-green-800' },
     in_use: { label: 'In Use', class: 'bg-blue-100 text-blue-800' },

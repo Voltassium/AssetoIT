@@ -15,6 +15,10 @@ const deleteUser = (id) => {
         form.delete(route('users.destroy', id));
     }
 };
+
+const toggleActive = (userId) => {
+    form.patch(route('users.toggle-active', userId));
+};
 </script>
 
 <template>
@@ -43,7 +47,7 @@ const deleteUser = (id) => {
                                 <tr>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama</th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal Pembuatan</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
                                 </tr>
                             </thead>
@@ -51,10 +55,22 @@ const deleteUser = (id) => {
                                 <tr v-for="user in users.data" :key="user.id">
                                     <td class="px-6 py-4 whitespace-nowrap">{{ user.name }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap">{{ user.email }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">{{ new Date(user.created_at).toLocaleDateString() }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span :class="[
+                                            'px-2 py-1 rounded-full text-xs',
+                                            user.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                                        ]">
+                                            {{ user.is_active ? 'Active' : 'Inactive' }}
+                                        </span>
+                                    </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         <Link :href="route('users.edit', user.id)" class="text-indigo-600 hover:text-indigo-900 mr-2">Edit</Link>
-                                        <button @click="deleteUser(user.id)" class="text-red-600 hover:text-red-900">Delete</button>
+                                        <button
+                                            @click="toggleActive(user.id)"
+                                            class="text-sm text-blue-600 hover:text-blue-900"
+                                        >
+                                            {{ user.is_active ? 'Deactivate' : 'Activate' }}
+                                        </button>
                                     </td>
                                 </tr>
                             </tbody>

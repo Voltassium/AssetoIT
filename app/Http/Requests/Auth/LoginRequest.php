@@ -41,7 +41,15 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+        $user = \App\Models\User::where('email', $this->email)->first();
+
+        if ($user && !$user->is_active) {
+            throw ValidationException::withMessages([
+                'email' => trans('Akun anda telah dinonaktifkan.'),
+            ]);
+        }
+
+        if (!Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
