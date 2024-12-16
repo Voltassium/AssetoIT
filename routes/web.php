@@ -43,6 +43,11 @@ Route::middleware(['auth', 'verified'])->group(function(){
     // Route::middleware(['admin'])->group(function() {
         Route::resource('devices', DeviceController::class)->except(['index']);
         Route::get('/damaged-devices', [DeviceController::class, 'damagedDevices'])->name('damaged-devices');
+    
+    // Rute baru untuk unduh laporan peminjaman
+    Route::get('/borrowings/report', [BorrowingController::class, 'exportReport'])
+    ->name('borrowings.report');
+
 });
 
 // Regular authenticated user routes - access for all authenticated users

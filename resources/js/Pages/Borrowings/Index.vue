@@ -5,7 +5,9 @@ import { useForm } from '@inertiajs/vue3';
 import Pagination from '@/Components/Pagination.vue';
 
 const props = defineProps({
-    borrowings: Object
+    borrowings: Object,
+    isAdmin: Boolean,
+    reportUrl: String
 });
 
 const form = useForm({});
@@ -39,6 +41,17 @@ const formatDate = (date) => {
                     </svg>
                     Pinjam Perangkat
                 </Link>
+                <!-- Tombol Unduh PDF -->
+                <div v-if="isAdmin">
+                    <a :href="reportUrl" target="_blank"
+                    class="inline-flex items-center px-4 py-2 bg-red-600 text-white border border-transparent rounded-md font-semibold text-xs uppercase tracking-widest hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M14.121 14.121a3 3 0 1 0-4.242-4.242 3 3 0 0 0 4.242 4.242zM7.05 14.95a7 7 0 1 1 9.9 0l-4.95 4.95-4.95-4.95z" />
+                        </svg>
+                        Unduh Laporan PDF
+                    </a>
+                </div>
             </div>
         </template>
 
