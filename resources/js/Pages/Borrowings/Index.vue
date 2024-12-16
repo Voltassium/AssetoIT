@@ -23,6 +23,12 @@ const getStatusColor = (returnDate) => {
 const formatDate = (date) => {
     return date ? new Date(date).toLocaleDateString() : '-';
 };
+
+// Function to handle report download
+const downloadReport = () => {
+    // You can customize the report route as per your backend API
+    window.location.href = route('borrowings.report');
+};
 </script>
 
 <template>
@@ -32,13 +38,25 @@ const formatDate = (date) => {
         <template #header>
             <div class="flex justify-between items-center">
                 <h2 class="text-xl font-semibold leading-tight text-gray-800">Peminjaman Perangkat</h2>
-                <Link :href="route('borrowings.create')"
-                      class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                    </svg>
-                    Pinjam Perangkat
-                </Link>
+                <div class="flex space-x-4">
+                    <Link v-if="$page.props.auth.user.role === 'user'"
+                          :href="route('borrowings.create')"
+                          class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                        </svg>
+                        Pinjam Perangkat
+                    </Link>
+                    <!-- Download Report Button -->
+                    <button 
+    @click="downloadReport"
+    class="inline-flex items-center px-4 py-2 bg-blue-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-600 focus:bg-blue-600 active:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150">
+    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+    </svg>
+    Unduh Laporan
+</button>
+                </div>
             </div>
         </template>
 
@@ -54,7 +72,9 @@ const formatDate = (date) => {
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal Pinjam</th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal Kembali</th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                                    <th
+                                    v-if = "$page.props.auth.user.role === 'user'"
+                                    scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
@@ -96,7 +116,7 @@ const formatDate = (date) => {
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                        <div v-if="!borrowing.actual_return_date" class="flex items-center space-x-2">
+                                        <div v-if="!borrowing.actual_return_date && $page.props.auth.user.role === 'user'" class="flex items-center space-x-2">
                                             <button
                                                 @click="returnDevice(borrowing.id)"
                                                 class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-semibold rounded-md
