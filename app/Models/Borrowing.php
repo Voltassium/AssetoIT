@@ -13,10 +13,19 @@ class Borrowing extends Model
     protected $fillable = [
         'user_id',
         'device_id',
+        'reason',
+        'status',
         'borrow_date',
         'return_date',
         'actual_return_date',
+        'late_fee',
+        'approved_at',
+        'approved_by',
+        'rejection_reason'
     ];
+
+    const LATE_FEE_PER_DAY = 5000; // Rp 5.000 per day
+
     /**
      * The attributes that should be cast.
      *
@@ -69,5 +78,18 @@ class Borrowing extends Model
     public function scopeReturned($query)
     {
         return $query->whereNotNull('return_date');
+    }
+
+    /**
+     * Calculate the late fee for the borrowing
+     */
+    public function calculateLateFee()
+    {
+        if (!$this->actual_return_date || !$this->return_date) {
+            return 0;
+        }
+
+        $daysLate = $this->actual_return_date->diffInDays($this->return_date, false);
+        return $daysLate > 0 ? $daysLate * self::LATE_FEE_PER_DAY : 0;
     }
 }

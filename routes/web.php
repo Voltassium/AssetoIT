@@ -34,6 +34,7 @@ Route::middleware(['auth', 'verified'])->group(function(){
     // Dashboard access for all users
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
+
     // Devices routes - index only for users, full access for admin
     Route::get('/devices', [DeviceController::class, 'index'])->name('devices.index');
     Route::patch('/users/{user}/toggle-active', [UserController::class, 'toggleActive'])
@@ -43,10 +44,12 @@ Route::middleware(['auth', 'verified'])->group(function(){
     // Route::middleware(['admin'])->group(function() {
         Route::resource('devices', DeviceController::class)->except(['index']);
         Route::get('/damaged-devices', [DeviceController::class, 'damagedDevices'])->name('damaged-devices');
-    
+
     // Rute baru untuk unduh laporan peminjaman
     Route::get('/borrowings/report', [BorrowingController::class, 'exportReport'])
     ->name('borrowings.report');
+    Route::post('/borrowings/{borrowing}/approve', [BorrowingController::class, 'approve'])->name('borrowings.approve');
+    Route::post('/borrowings/{borrowing}/reject', [BorrowingController::class, 'reject'])->name('borrowings.reject');
 
 });
 

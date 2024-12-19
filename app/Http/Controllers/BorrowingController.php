@@ -16,13 +16,13 @@ class BorrowingController extends Controller
     {
         $user = auth()->user();
 
-        // If user is admin, show all borrowings
+        // jika user admin, menampilkan semua peminjaman
         if ($user->isAdmin()) {
             $borrowings = Borrowing::with(['user', 'device'])
                 ->latest()
                 ->paginate(10);
         }
-        // If regular user, show only their borrowings
+        // jika user yang login, hanya menampilkan peminjaman yang dia lakukan
         else {
             $borrowings = Borrowing::with(['user', 'device'])
                 ->where('user_id', $user->id)
@@ -48,64 +48,98 @@ class BorrowingController extends Controller
     {
         $validated = $request->validate([
             'device_id' => 'required|exists:devices,id',
+            'reason' => 'required|string|min:10',
             'borrow_date' => 'required|date',
             'return_date' => 'required|date|after:borrow_date',
         ]);
 
-        // Add authenticated user's ID
         $validated['user_id'] = auth()->id();
+        $validated['status'] = 'pending';
 
         DB::transaction(function () use ($validated) {
             Borrowing::create($validated);
-            Device::where('id', $validated['device_id'])
-                ->update(['status' => Device::STATUS_IN_USE]);
         });
 
         return redirect()->route('borrowings.index')
-            ->with('message', 'Peminjaman Berhasil.');
+            ->with('message', 'Borrowing request submitted for approval.');
     }
 
     public function show(Borrowing $borrowing)
     {
         $borrowing->load(['user', 'device']);
-
         return Inertia::render('Borrowings/Show', [
             'borrowing' => $borrowing
         ]);
     }
 
-    public function return(Borrowing $borrowing)
+    public function approve(Borrowing $borrowing)
     {
-    DB::transaction(function () use ($borrowing) {
+        $borrowing->update([
+            'status' => 'approved',
+            'approved_at' => now(),
+            'approved_by' => auth()->id()
+        ]);
+
+        $borrowing->device->update(['status' => Device::STATUS_IN_USE]);
+        return redirect()->back()
+            ->with('message', 'Borrowing request approved.');
+    }
+
+    public function reject(Request $request, Borrowing $borrowing)
+    {
+        $validated = $request->validate([
+            'rejection_reason' => 'required|string'
+        ]);
 
         $borrowing->update([
-            'actual_return_date' => now()
+            'status' => 'rejected',
+            'rejection_reason' => $validated['rejection_reason']
         ]);
 
-        $borrowing->device->update([
-            'status' => Device::STATUS_AVAILABLE
-        ]);
-    });
+        return redirect()->back()
+            ->with('message', 'Borrowing request rejected.');
+    }
 
-    return redirect()->back()
-        ->with('message', 'Perangkat berhasil dikembalikan.');
+    public function return(Borrowing $borrowing)
+    {
+        if ($borrowing->status === 'pending') {
+            return redirect()->back()
+                ->with('error', 'Tidak bisa mengembalikan perangkat ketika sedang pending.');
+        }
+
+        DB::transaction(function () use ($borrowing) {
+            $borrowing->actual_return_date = now();
+            $borrowing->late_fee = $borrowing->calculateLateFee();
+            $borrowing->status = 'returned';
+            $borrowing->save();
+
+            $borrowing->device->update([
+                'status' => Device::STATUS_AVAILABLE
+            ]);
+        });
+
+        return redirect()->back()
+            ->with('message', sprintf(
+                'Device returned successfully. %s',
+                $borrowing->late_fee > 0 ? "Late fee: Rp " . number_format($borrowing->late_fee, 0, ',', '.') : ''
+            ));
     }
 
     public function exportReport()
-{
-    // Ambil semua data peminjaman dengan relasi ke user dan device
-    $borrowings = Borrowing::with(['user', 'device'])
-        ->orderBy('created_at', 'desc')
-        ->get();
+    {
+        // Ambil semua data peminjaman dengan relasi ke user dan device
+        $borrowings = Borrowing::with(['user', 'device'])
+            ->orderBy('created_at', 'desc')
+            ->get();
 
-    // Load view laporan untuk PDF
-    $pdf = Pdf::loadView('borrowings', [
-        'borrowings' => $borrowings,
-        'title' => 'Laporan Peminjaman Perangkat IT',
-        'date' => now()->format('d-m-Y')
-    ]);
+        // Load view laporan untuk PDF
+        $pdf = Pdf::loadView('borrowings', [
+            'borrowings' => $borrowings,
+            'title' => 'Laporan Peminjaman Perangkat IT',
+            'date' => now()->format('d-m-Y')
+        ]);
 
-    // Return file PDF untuk diunduh
-    return $pdf->download('laporan_peminjaman.pdf');
+        // Return file PDF untuk diunduh
+        return $pdf->download('laporan_peminjaman.pdf');
     }
 }

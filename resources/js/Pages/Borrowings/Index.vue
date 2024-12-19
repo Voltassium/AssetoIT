@@ -25,6 +25,16 @@ const getStatusColor = (returnDate) => {
 const formatDate = (date) => {
     return date ? new Date(date).toLocaleDateString() : '-';
 };
+
+const approve = (borrowingId) => {
+    form.post(route('borrowings.approve', borrowingId));
+};
+
+const reject = (borrowingId) => {
+    form.post(route('borrowings.reject', borrowingId), {
+        rejection_reason: rejectionReason.value
+    });
+};
 </script>
 
 <template>
@@ -34,21 +44,23 @@ const formatDate = (date) => {
         <template #header>
             <div class="flex justify-between items-center">
                 <h2 class="text-xl font-semibold leading-tight text-gray-800">Peminjaman Perangkat</h2>
-                <Link :href="route('borrowings.create')"
-                      class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                    </svg>
-                    Pinjam Perangkat
-                </Link>
-                <!-- Tombol Unduh PDF -->
-                <div v-if="isAdmin">
-                    <a :href="reportUrl" target="_blank"
-                    class="inline-flex items-center px-4 py-2 bg-red-600 text-white border border-transparent rounded-md font-semibold text-xs uppercase tracking-widest hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150">
+
+                <!-- hanya tunjukkan pinjam perangkat ke user -->
+                <div class="flex items-center space-x-4">
+                    <Link v-if="!isAdmin"
+                          :href="route('borrowings.create')"
+                          class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M14.121 14.121a3 3 0 1 0-4.242-4.242 3 3 0 0 0 4.242 4.242zM7.05 14.95a7 7 0 1 1 9.9 0l-4.95 4.95-4.95-4.95z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                         </svg>
+                        Pinjam Perangkat
+                    </Link>
+
+                    <!-- Download PDF untuk admin saja -->
+                    <a v-if="isAdmin"
+                       :href="reportUrl"
+                       target="_blank"
+                       class="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-md">
                         Unduh Laporan PDF
                     </a>
                 </div>
@@ -110,18 +122,34 @@ const formatDate = (date) => {
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         <div v-if="!borrowing.actual_return_date" class="flex items-center space-x-2">
-                                            <button
+                                            <!-- hanya tampilkan tombol return untuk peminjaman yang sudah diapprove -->
+                                            <button v-if="!isAdmin && borrowing.status === 'approved'"
                                                 @click="returnDevice(borrowing.id)"
-                                                class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-semibold rounded-md
-                                                       text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-800
-                                                       transform transition-all duration-200 hover:scale-105
-                                                       focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:shadow-outline">
+                                                class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md">
                                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                           d="M5 13l4 4L19 7" />
                                                 </svg>
                                                 Kembalikan
                                             </button>
+
+                                            <!-- Status badge for pending -->
+                                            <span v-if="borrowing.status === 'pending'"
+                                                  class="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800">
+                                                Menunggu Persetujuan
+                                            </span>
+
+                                            <!-- Tombol Approve untuk admin -->
+                                            <div v-if="isAdmin && borrowing.status === 'pending'" class="flex items-center space-x-2">
+                                                <button @click="approve(borrowing.id)"
+                                                        class="bg-green-500 text-white px-4 py-2 rounded">
+                                                    Setujui
+                                                </button>
+                                                <button @click="showRejectModal(borrowing.id)"
+                                                        class="bg-red-500 text-white px-4 py-2 rounded">
+                                                    Tolak
+                                                </button>
+                                            </div>
                                         </div>
                                     </td>
                                 </tr>
