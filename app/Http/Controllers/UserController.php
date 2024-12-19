@@ -23,7 +23,9 @@ class UserController extends Controller
 
     public function create()
     {
-        return Inertia::render('Users/Create');
+        return Inertia::render('Users/Create', [
+            'roles' => ['admin', 'user']
+        ]);
     }
 
     public function store(Request $request)
@@ -33,13 +35,16 @@ class UserController extends Controller
             'nim' => 'required|string|unique:users,nim|max:20',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
+            'role' => 'required|in:admin,user',
         ]);
 
-        User::create([
+        $user = User::create([
             'name' => $validated['name'],
             'nim' => $validated['nim'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
+            'role' => $validated['role'],
+            'is_active' => true
         ]);
 
         return redirect()->route('users.index')->with('message', 'User created successfully.');
@@ -48,7 +53,8 @@ class UserController extends Controller
     public function edit(User $user)
     {
         return Inertia::render('Users/Edit', [
-            'user' => $user->only('id', 'name', 'email')
+            'user' => $user->only('id', 'name', 'nim', 'email', 'role', 'is_active'),
+            'roles' => ['admin', 'user']
         ]);
     }
 
@@ -56,20 +62,27 @@ class UserController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'nim' => 'required|string|max:20|unique:users,nim,' . $user->id,
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
-            'password' => 'sometimes|string|min:8|confirmed',
+            'password' => 'nullable|string|min:8|confirmed',
+            'role' => 'required|in:admin,user',
         ]);
 
-        $user->update([
+        $updateData = [
             'name' => $validated['name'],
+            'nim' => $validated['nim'],
             'email' => $validated['email'],
-        ]);
+            'role' => $validated['role'],
+        ];
 
-        if (isset($validated['password'])) {
-            $user->update(['password' => Hash::make($validated['password'])]);
+        if (!empty($validated['password'])) {
+            $updateData['password'] = Hash::make($validated['password']);
         }
 
-        return redirect()->route('users.index')->with('message', 'User updated successfully.');
+        $user->update($updateData);
+
+        return redirect()->route('users.index')
+            ->with('message', 'User updated successfully.');
     }
 
     public function destroy(User $user)

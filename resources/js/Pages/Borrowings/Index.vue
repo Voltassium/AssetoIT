@@ -3,6 +3,10 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
 import { useForm } from '@inertiajs/vue3';
 import Pagination from '@/Components/Pagination.vue';
+import Modal from '@/Components/Modal.vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
+import SecondaryButton from '@/Components/SecondaryButton.vue';
+import { ref } from 'vue';
 
 const props = defineProps({
     borrowings: Object,
@@ -11,6 +15,9 @@ const props = defineProps({
 });
 
 const form = useForm({});
+const showingRejectModal = ref(false);
+const rejectionReason = ref('');
+const selectedBorrowingId = ref(null);
 
 const returnDevice = (borrowingId) => {
     if (confirm('apakah anda yakin ingin mengembalikan perangkat ini?')) {
@@ -25,6 +32,34 @@ const getStatusColor = (returnDate) => {
 const formatDate = (date) => {
     return date ? new Date(date).toLocaleDateString() : '-';
 };
+
+const approve = (borrowingId) => {
+    if (confirm('Apakah Anda yakin ingin menyetujui peminjaman ini?')) {
+        form.post(route('borrowings.approve', borrowingId));
+    }
+};
+
+const reject = (borrowingId) => {
+    if (!rejectionReason.value) return;
+
+    form.post(route('borrowings.reject', borrowingId), {
+        rejection_reason: rejectionReason.value,
+        onSuccess: () => {
+            closeRejectModal();
+        },
+    });
+};
+
+const showRejectModal = (borrowingId) => {
+    selectedBorrowingId.value = borrowingId;
+    showingRejectModal.value = true;
+};
+
+const closeRejectModal = () => {
+    showingRejectModal.value = false;
+    selectedBorrowingId.value = null;
+    rejectionReason.value = '';
+};
 </script>
 
 <template>
@@ -34,21 +69,23 @@ const formatDate = (date) => {
         <template #header>
             <div class="flex justify-between items-center">
                 <h2 class="text-xl font-semibold leading-tight text-gray-800">Peminjaman Perangkat</h2>
-                <Link :href="route('borrowings.create')"
-                      class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                    </svg>
-                    Pinjam Perangkat
-                </Link>
-                <!-- Tombol Unduh PDF -->
-                <div v-if="isAdmin">
-                    <a :href="reportUrl" target="_blank"
-                    class="inline-flex items-center px-4 py-2 bg-red-600 text-white border border-transparent rounded-md font-semibold text-xs uppercase tracking-widest hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150">
+
+                <!-- hanya tunjukkan pinjam perangkat ke user -->
+                <div class="flex items-center space-x-4">
+                    <Link v-if="!isAdmin"
+                          :href="route('borrowings.create')"
+                          class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M14.121 14.121a3 3 0 1 0-4.242-4.242 3 3 0 0 0 4.242 4.242zM7.05 14.95a7 7 0 1 1 9.9 0l-4.95 4.95-4.95-4.95z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                         </svg>
+                        Pinjam Perangkat
+                    </Link>
+
+                    <!-- Download PDF untuk admin saja -->
+                    <a v-if="isAdmin"
+                       :href="reportUrl"
+                       target="_blank"
+                       class="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-md">
                         Unduh Laporan PDF
                     </a>
                 </div>
@@ -68,6 +105,7 @@ const formatDate = (date) => {
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal Kembali</th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Denda Telat</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
@@ -110,19 +148,55 @@ const formatDate = (date) => {
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         <div v-if="!borrowing.actual_return_date" class="flex items-center space-x-2">
-                                            <button
+                                            <!-- hanya tampilkan tombol return untuk peminjaman yang sudah diapprove -->
+                                            <button v-if="!isAdmin && borrowing.status === 'approved'"
                                                 @click="returnDevice(borrowing.id)"
-                                                class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-semibold rounded-md
-                                                       text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-800
-                                                       transform transition-all duration-200 hover:scale-105
-                                                       focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:shadow-outline">
+                                                class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md">
                                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                           d="M5 13l4 4L19 7" />
                                                 </svg>
                                                 Kembalikan
                                             </button>
+
+                                            <!-- Status badge for pending -->
+                                            <span v-if="borrowing.status === 'pending' && !isAdmin"
+                                                  class="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800">
+                                                Menunggu Persetujuan
+                                            </span>
+
+                                            <!-- Tombol Setuju/Tolak -->
+                                            <div v-if="isAdmin && borrowing.status === 'pending'" class="flex items-center space-x-2">
+                                                <button
+                                                    @click="approve(borrowing.id)"
+                                                    class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md text-sm text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50"
+                                                    :disabled="form.processing"
+                                                >
+                                                    <svg v-if="form.processing" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                    </svg>
+                                                    <svg v-else class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                                    </svg>
+                                                    {{ form.processing ? 'Memproses...' : 'Setujui' }}
+                                                </button>
+
+                                                <button
+                                                    @click="showRejectModal(borrowing.id)"
+                                                    class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md text-sm text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50"
+                                                    :disabled="form.processing"
+                                                >
+                                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                                    </svg>
+                                                    Tolak
+                                                </button>
+                                            </div>
                                         </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        {{ borrowing.late_fee }}
                                     </td>
                                 </tr>
                             </tbody>
@@ -136,4 +210,29 @@ const formatDate = (date) => {
             </div>
         </div>
     </AuthenticatedLayout>
+
+    <!-- Rejection Modal -->
+    <Modal :show="showingRejectModal" @close="closeRejectModal">
+        <div class="p-6">
+            <h2 class="text-lg font-medium">Tolak Peminjaman</h2>
+            <div class="mt-4">
+                <textarea
+                    v-model="rejectionReason"
+                    class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                    rows="3"
+                    placeholder="Alasan penolakan..."
+                ></textarea>
+            </div>
+            <div class="mt-6 flex justify-end gap-3">
+                <SecondaryButton @click="closeRejectModal">Batal</SecondaryButton>
+                <PrimaryButton
+                    @click="reject(selectedBorrowingId)"
+                    :disabled="!rejectionReason || form.processing"
+                    class="bg-red-600 hover:bg-red-700"
+                >
+                    {{ form.processing ? 'Memproses...' : 'Konfirmasi Penolakan' }}
+                </PrimaryButton>
+            </div>
+        </div>
+    </Modal>
 </template>
