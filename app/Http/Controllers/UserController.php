@@ -48,7 +48,7 @@ class UserController extends Controller
     public function edit(User $user)
     {
         return Inertia::render('Users/Edit', [
-            'user' => $user->only('id', 'name', 'email')
+            'user' => $user->only('id', 'name', 'nim', 'email', 'is_active')
         ]);
     }
 
@@ -56,20 +56,25 @@ class UserController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'nim' => 'required|string|max:20|unique:users,nim,' . $user->id,
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
-            'password' => 'sometimes|string|min:8|confirmed',
+            'password' => 'nullable|string|min:8|confirmed',
         ]);
 
-        $user->update([
+        $updateData = [
             'name' => $validated['name'],
+            'nim' => $validated['nim'],
             'email' => $validated['email'],
-        ]);
+        ];
 
-        if (isset($validated['password'])) {
-            $user->update(['password' => Hash::make($validated['password'])]);
+        if (!empty($validated['password'])) {
+            $updateData['password'] = Hash::make($validated['password']);
         }
 
-        return redirect()->route('users.index')->with('message', 'User updated successfully.');
+        $user->update($updateData);
+
+        return redirect()->route('users.index')
+            ->with('message', 'User updated successfully.');
     }
 
     public function destroy(User $user)

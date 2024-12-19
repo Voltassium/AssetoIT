@@ -20,6 +20,7 @@ use Inertia\Inertia;
 |
 */
 
+// Public routes
 Route::get('/', function () {
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
@@ -29,45 +30,50 @@ Route::get('/', function () {
     ]);
 });
 
-// Admin only routes - ensure both auth and admin role
-Route::middleware(['auth', 'verified'])->group(function(){
-    // Dashboard access for all users
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-
-
-    // Devices routes - index only for users, full access for admin
-    Route::get('/devices', [DeviceController::class, 'index'])->name('devices.index');
-    Route::patch('/users/{user}/toggle-active', [UserController::class, 'toggleActive'])
-    ->name('users.toggle-active');
-
-    // Admin only device management routes
-    // Route::middleware(['admin'])->group(function() {
-        Route::resource('devices', DeviceController::class)->except(['index']);
-        Route::get('/damaged-devices', [DeviceController::class, 'damagedDevices'])->name('damaged-devices');
-
-    // Rute baru untuk unduh laporan peminjaman
-    Route::get('/borrowings/report', [BorrowingController::class, 'exportReport'])
-    ->name('borrowings.report');
-    Route::post('/borrowings/{borrowing}/approve', [BorrowingController::class, 'approve'])->name('borrowings.approve');
-    Route::post('/borrowings/{borrowing}/reject', [BorrowingController::class, 'reject'])->name('borrowings.reject');
-
-});
-
-// Regular authenticated user routes - access for all authenticated users
+// Routes for authenticated users
 Route::middleware(['auth', 'verified'])->group(function () {
-    // Users
-    Route::resource('users', UserController::class);
-    Route::patch('/users/{user}/toggle-active', [UserController::class, 'toggleActive'])
-        ->name('users.toggle-active');
+    // Admin dashboard
+    Route::get('/dashboard', [DashboardController::class, 'index'])
+        ->name('dashboard');
+
+    // User dashboard
+    Route::get('/dashboarduser', [DashboardController::class, 'userDashboard'])
+        ->name('dashboarduser');
+
+    // Devices - View only for regular users
+    Route::get('/devices', [DeviceController::class, 'index'])->name('devices.index');
+    Route::get('/devices/{device}', [DeviceController::class, 'show'])->name('devices.show');
+
+    // Borrowings
+    Route::resource('borrowings', BorrowingController::class)->except(['edit', 'update']);
+    Route::patch('borrowings/{borrowing}/return', [BorrowingController::class, 'return'])
+        ->name('borrowings.return');
 
     // Profile routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
 
-    Route::resource('borrowings', BorrowingController::class);
-    Route::patch('borrowings/{borrowing}/return', [BorrowingController::class, 'return'])
-        ->name('borrowings.return');
+// Admin only routes
+Route::middleware(['auth', 'verified'])->group(function () {
+    // User Management
+    Route::resource('users', UserController::class);
+    Route::patch('/users/{user}/toggle-active', [UserController::class, 'toggleActive'])
+        ->name('users.toggle-active');
+
+    // Device Management
+    Route::resource('devices', DeviceController::class)->except(['index', 'show']);
+    Route::get('/damaged-devices', [DeviceController::class, 'damagedDevices'])
+        ->name('damaged-devices');
+
+    // Borrowing Management
+    Route::get('/borrowings/report', [BorrowingController::class, 'exportReport'])
+        ->name('borrowings.report');
+    Route::post('/borrowings/{borrowing}/approve', [BorrowingController::class, 'approve'])
+        ->name('borrowings.approve');
+    Route::post('/borrowings/{borrowing}/reject', [BorrowingController::class, 'reject'])
+        ->name('borrowings.reject');
 });
 
 require __DIR__.'/auth.php';

@@ -3,6 +3,10 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
 import { useForm } from '@inertiajs/vue3';
 import Pagination from '@/Components/Pagination.vue';
+import Modal from '@/Components/Modal.vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
+import SecondaryButton from '@/Components/SecondaryButton.vue';
+import { ref } from 'vue';
 
 const props = defineProps({
     borrowings: Object,
@@ -11,6 +15,9 @@ const props = defineProps({
 });
 
 const form = useForm({});
+const showingRejectModal = ref(false);
+const rejectionReason = ref('');
+const selectedBorrowingId = ref(null);
 
 const returnDevice = (borrowingId) => {
     if (confirm('apakah anda yakin ingin mengembalikan perangkat ini?')) {
@@ -27,13 +34,31 @@ const formatDate = (date) => {
 };
 
 const approve = (borrowingId) => {
-    form.post(route('borrowings.approve', borrowingId));
+    if (confirm('Apakah Anda yakin ingin menyetujui peminjaman ini?')) {
+        form.post(route('borrowings.approve', borrowingId));
+    }
 };
 
 const reject = (borrowingId) => {
+    if (!rejectionReason.value) return;
+
     form.post(route('borrowings.reject', borrowingId), {
-        rejection_reason: rejectionReason.value
+        rejection_reason: rejectionReason.value,
+        onSuccess: () => {
+            closeRejectModal();
+        },
     });
+};
+
+const showRejectModal = (borrowingId) => {
+    selectedBorrowingId.value = borrowingId;
+    showingRejectModal.value = true;
+};
+
+const closeRejectModal = () => {
+    showingRejectModal.value = false;
+    selectedBorrowingId.value = null;
+    rejectionReason.value = '';
 };
 </script>
 
@@ -80,6 +105,7 @@ const reject = (borrowingId) => {
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal Kembali</th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Denda Telat</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
@@ -134,23 +160,43 @@ const reject = (borrowingId) => {
                                             </button>
 
                                             <!-- Status badge for pending -->
-                                            <span v-if="borrowing.status === 'pending'"
+                                            <span v-if="borrowing.status === 'pending' && !isAdmin"
                                                   class="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800">
                                                 Menunggu Persetujuan
                                             </span>
 
-                                            <!-- Tombol Approve untuk admin -->
+                                            <!-- Tombol Setuju/Tolak -->
                                             <div v-if="isAdmin && borrowing.status === 'pending'" class="flex items-center space-x-2">
-                                                <button @click="approve(borrowing.id)"
-                                                        class="bg-green-500 text-white px-4 py-2 rounded">
-                                                    Setujui
+                                                <button
+                                                    @click="approve(borrowing.id)"
+                                                    class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md text-sm text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50"
+                                                    :disabled="form.processing"
+                                                >
+                                                    <svg v-if="form.processing" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                    </svg>
+                                                    <svg v-else class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                                    </svg>
+                                                    {{ form.processing ? 'Memproses...' : 'Setujui' }}
                                                 </button>
-                                                <button @click="showRejectModal(borrowing.id)"
-                                                        class="bg-red-500 text-white px-4 py-2 rounded">
+
+                                                <button
+                                                    @click="showRejectModal(borrowing.id)"
+                                                    class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md text-sm text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50"
+                                                    :disabled="form.processing"
+                                                >
+                                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                                    </svg>
                                                     Tolak
                                                 </button>
                                             </div>
                                         </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        {{ borrowing.late_fee }}
                                     </td>
                                 </tr>
                             </tbody>
@@ -164,4 +210,29 @@ const reject = (borrowingId) => {
             </div>
         </div>
     </AuthenticatedLayout>
+
+    <!-- Rejection Modal -->
+    <Modal :show="showingRejectModal" @close="closeRejectModal">
+        <div class="p-6">
+            <h2 class="text-lg font-medium">Tolak Peminjaman</h2>
+            <div class="mt-4">
+                <textarea
+                    v-model="rejectionReason"
+                    class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                    rows="3"
+                    placeholder="Alasan penolakan..."
+                ></textarea>
+            </div>
+            <div class="mt-6 flex justify-end gap-3">
+                <SecondaryButton @click="closeRejectModal">Batal</SecondaryButton>
+                <PrimaryButton
+                    @click="reject(selectedBorrowingId)"
+                    :disabled="!rejectionReason || form.processing"
+                    class="bg-red-600 hover:bg-red-700"
+                >
+                    {{ form.processing ? 'Memproses...' : 'Konfirmasi Penolakan' }}
+                </PrimaryButton>
+            </div>
+        </div>
+    </Modal>
 </template>

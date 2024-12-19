@@ -82,7 +82,7 @@ class BorrowingController extends Controller
 
         $borrowing->device->update(['status' => Device::STATUS_IN_USE]);
         return redirect()->back()
-            ->with('message', 'Borrowing request approved.');
+            ->with('message', 'permintaan peminjaman telah disetujui.');
     }
 
     public function reject(Request $request, Borrowing $borrowing)
@@ -91,13 +91,18 @@ class BorrowingController extends Controller
             'rejection_reason' => 'required|string'
         ]);
 
-        $borrowing->update([
-            'status' => 'rejected',
-            'rejection_reason' => $validated['rejection_reason']
-        ]);
+        DB::transaction(function () use ($borrowing, $validated) {
+            // Update device status back to available
+            $borrowing->device->update([
+                'status' => Device::STATUS_AVAILABLE
+            ]);
+
+            // Delete the borrowing record
+            $borrowing->delete();
+        });
 
         return redirect()->back()
-            ->with('message', 'Borrowing request rejected.');
+            ->with('message', 'permintaan peminjaman telah ditolak.');
     }
 
     public function return(Borrowing $borrowing)
