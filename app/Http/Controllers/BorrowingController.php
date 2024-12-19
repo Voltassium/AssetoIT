@@ -145,6 +145,6 @@ class BorrowingController extends Controller
         ]);
 
         // Return file PDF untuk diunduh
-        return $pdf->download('laporan_peminjaman.pdf');
+        return $pdf->stream('laporan_peminjaman.pdf');
     }
 }

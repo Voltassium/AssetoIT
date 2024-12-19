@@ -59,9 +59,6 @@ onMounted(() => {
                                     <p class="text-3xl font-bold text-blue-600">
                                         {{ isLoading ? '...' : stats.availableDevices }}
                                     </p>
-                                    <p class="ml-2 text-sm text-gray-500">
-                                        / {{ stats.totalDevices }} total
-                                    </p>
                                 </div>
                             </div>
                         </div>

@@ -55,6 +55,7 @@ class UserBorrowingTest extends TestCase
         $borrowingData = [
             'device_id' => $Device->id,
             'borrow_date' => now()->format('Y-m-d'),
+            'reason' => 'For testing',
             'return_date' => now()->addDays(7)->format('Y-m-d'),
         ];
 
@@ -68,9 +69,5 @@ class UserBorrowingTest extends TestCase
             $response->assertSessionHasErrors('device_id');
             $response->assertSessionDoesntHaveErrors(['borrow_date', 'return_date']);
         }
-
-
     }
-    
-
 }

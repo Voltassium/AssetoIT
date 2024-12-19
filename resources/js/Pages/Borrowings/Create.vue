@@ -50,7 +50,7 @@ const calculateMinReturn = () => {
                             </div>
 
                             <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-700">Reason for Borrowing</label>
+                                <label class="block text-sm font-medium text-gray-700">Alasan Meminjam Perangkat</label>
                                 <textarea
                                     v-model="form.reason"
                                     rows="3"
