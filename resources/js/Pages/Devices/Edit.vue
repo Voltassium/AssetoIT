@@ -7,42 +7,43 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 
 const props = defineProps({
-    user: {
+    device: {
         type: Object,
+        required: true
+    },
+    statusOptions: {
+        type: Array,
         required: true
     }
 });
 
 const form = useForm({
-    name: props.user.name,
-    nim: props.user.nim,
-    email: props.user.email,
-    password: '',
-    password_confirmation: '',
+    name: props.device.name,
+    type: props.device.type,
+    manufacturer: props.device.manufacturer,
+    specifications: props.device.specifications,
+    status: props.device.status,
 });
 
 function submit() {
-    form.put(route('users.update', props.user.id), {
-        preserveScroll: true,
-        onSuccess: () => {
-            form.reset('password', 'password_confirmation');
-        }
+    form.put(route('devices.update', props.device.id), {
+        preserveScroll: true
     });
 }
 </script>
 
 <template>
-    <Head title="Edit User" />
+    <Head title="Edit Device" />
 
     <AuthenticatedLayout>
         <template #header>
             <div class="flex justify-between items-center">
-                <h2 class="font-semibold text-xl text-gray-800">Edit User</h2>
+                <h2 class="font-semibold text-xl text-gray-800">Edit Device</h2>
                 <Link
-                    :href="route('users.index')"
+                    :href="route('devices.index')"
                     class="px-3 py-2 text-sm bg-gray-200 hover:bg-gray-300 rounded-lg"
                 >
-                    Kembali
+                    Back
                 </Link>
             </div>
         </template>
@@ -65,51 +66,53 @@ function submit() {
                             </div>
 
                             <div>
-                                <InputLabel for="nim" value="NIM" />
+                                <InputLabel for="type" value="Type" />
                                 <TextInput
-                                    id="nim"
-                                    v-model="form.nim"
+                                    id="type"
+                                    v-model="form.type"
                                     type="text"
                                     class="mt-1 block w-full"
                                     required
                                 />
-                                <InputError :message="form.errors.nim" class="mt-2" />
+                                <InputError :message="form.errors.type" class="mt-2" />
                             </div>
 
                             <div>
-                                <InputLabel for="email" value="Email" />
+                                <InputLabel for="manufacturer" value="Manufacturer" />
                                 <TextInput
-                                    id="email"
-                                    v-model="form.email"
-                                    type="email"
+                                    id="manufacturer"
+                                    v-model="form.manufacturer"
+                                    type="text"
                                     class="mt-1 block w-full"
                                     required
                                 />
-                                <InputError :message="form.errors.email" class="mt-2" />
+                                <InputError :message="form.errors.manufacturer" class="mt-2" />
                             </div>
 
                             <div>
-                                <InputLabel for="password" value="Password" />
-                                <TextInput
-                                    id="password"
-                                    v-model="form.password"
-                                    type="password"
-                                    class="mt-1 block w-full"
-                                    autocomplete="new-password"
-                                />
-                                <InputError :message="form.errors.password" class="mt-2" />
+                                <InputLabel for="specifications" value="Specifications" />
+                                <textarea
+                                    id="specifications"
+                                    v-model="form.specifications"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                    rows="3"
+                                ></textarea>
+                                <InputError :message="form.errors.specifications" class="mt-2" />
                             </div>
 
                             <div>
-                                <InputLabel for="password_confirmation" value="Confirm Password" />
-                                <TextInput
-                                    id="password_confirmation"
-                                    v-model="form.password_confirmation"
-                                    type="password"
-                                    class="mt-1 block w-full"
-                                    autocomplete="new-password"
-                                />
-                                <InputError :message="form.errors.password_confirmation" class="mt-2" />
+                                <InputLabel for="status" value="Status" />
+                                <select
+                                    id="status"
+                                    v-model="form.status"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                    required
+                                >
+                                    <option v-for="status in statusOptions" :key="status" :value="status">
+                                        {{ status }}
+                                    </option>
+                                </select>
+                                <InputError :message="form.errors.status" class="mt-2" />
                             </div>
 
                             <div class="flex items-center gap-4">
@@ -124,7 +127,7 @@ function submit() {
                                     leave-to-class="opacity-0"
                                 >
                                     <p v-if="form.recentlySuccessful" class="text-sm text-gray-600">
-                                        Tersimpan
+                                        Saved.
                                     </p>
                                 </transition>
                             </div>

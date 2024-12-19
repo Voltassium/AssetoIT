@@ -41,6 +41,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('dashboarduser');
 
     // Devices - View only for regular users
+    Route::resource('devices', DeviceController::class);
     Route::get('/devices', [DeviceController::class, 'index'])->name('devices.index');
     Route::get('/devices/{device}', [DeviceController::class, 'show'])->name('devices.show');
 
