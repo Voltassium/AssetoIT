@@ -89,7 +89,7 @@ class DeviceSeeder extends Seeder
         ]);
 
         Device::create([
-            'name' => 'Lemari Sliding Kaca Chitose Chiba SL-1830 G Lemari Arsip Kanto',
+            'name' => 'Lemari Sliding Kaca Chitose Chiba SL-1830',
             'type' => 'Lemari',
             'manufacturer' => 'Chitose',
             'specifications' => 'description',
@@ -97,7 +97,7 @@ class DeviceSeeder extends Seeder
         ]);
 
         Device::create([
-            'name' => 'Lemari Sliding Kaca Chitose Chiba SL-1830 G Lemari Arsip Kanto',
+            'name' => 'Lemari Sliding Kaca Chitose Chiba SL-1830',
             'type' => 'Lemari',
             'manufacturer' => 'Chitose',
             'specifications' => 'description',
@@ -201,7 +201,7 @@ class DeviceSeeder extends Seeder
         ]);
 
         Device::create([
-            'name' => 'HP Smart Tank 519 Wireless Printer (Print Scan Copy)',
+            'name' => 'HP Smart Tank 519 Wireless Printer',
             'type' => 'Printer',
             'manufacturer' => 'HP',
             'specifications' => 'description',
@@ -209,7 +209,7 @@ class DeviceSeeder extends Seeder
         ]);
 
         Device::create([
-            'name' => 'HP Smart Tank 519 Wireless Printer (Print Scan Copy)',
+            'name' => 'HP Smart Tank 519 Wireless Printer',
             'type' => 'Printer',
             'manufacturer' => 'HP',
             'specifications' => 'description',
@@ -217,7 +217,7 @@ class DeviceSeeder extends Seeder
         ]);
 
         Device::create([
-            'name' => 'Brother MFC-J3530DW Multifunction Inkjet Print (Scan/ Copy/Duplex + WiFi)',
+            'name' => 'Brother MFC-J3530DW Multifunction Inkjet Print',
             'type' => 'Printer',
             'manufacturer' => 'Brother',
             'specifications' => 'description',
@@ -225,7 +225,7 @@ class DeviceSeeder extends Seeder
         ]);
 
         Device::create([
-            'name' => 'Brother MFC-J3530DW Multifunction Inkjet Print (Scan/ Copy/Duplex + WiFi)',
+            'name' => 'Brother MFC-J3530DW Multifunction Inkjet Print',
             'type' => 'Printer',
             'manufacturer' => 'Brother',
             'specifications' => 'description',
@@ -233,7 +233,7 @@ class DeviceSeeder extends Seeder
         ]);
 
         Device::create([
-            'name' => 'WD My Cloud Home 8TB - Hardisk External WD Asli dan Bergarnsi Resmi',
+            'name' => 'WD My Cloud Home 8TB',
             'type' => 'Hardisk External',
             'manufacturer' => 'WD',
             'specifications' => 'description',
@@ -241,7 +241,7 @@ class DeviceSeeder extends Seeder
         ]);
 
         Device::create([
-            'name' => 'WD My Cloud Home 8TB - Hardisk External WD Asli dan Bergarnsi Resmi',
+            'name' => 'WD My Cloud Home 8TB',
             'type' => 'Hardisk External',
             'manufacturer' => 'WD',
             'specifications' => 'description',
