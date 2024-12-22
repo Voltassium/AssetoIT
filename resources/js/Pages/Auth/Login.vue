@@ -18,7 +18,6 @@ defineProps({
 
 const form = useForm({
     email: '',
-    nim: '',
     password: '',
     remember: false,
 });
@@ -60,21 +59,6 @@ const submit = () => {
                             autocomplete="username"
                         />
                         <InputError class="mt-2" :message="form.errors.email" />
-                    </div>
-
-                    <div>
-                        <InputLabel for="nim" value="NIM" />
-                        <TextInput
-                            id="nim"
-                            type="text"
-                            class="mt-1 block w-full"
-                            v-model="form.nim"
-                            placeholder="Enter your NIM"
-                            required
-                            autofocus
-                            autocomplete="nim"
-                        />
-                        <InputError class="mt-2" :message="form.errors.nim" />
                     </div>
 
                     <div class="mt-4">

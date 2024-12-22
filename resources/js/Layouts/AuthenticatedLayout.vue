@@ -124,14 +124,6 @@ const toggleSidebar = () => {
                             Dashboard
                         </Link>
                         <Link
-                            v-if="$page.props.auth.user.role === 'user'"
-                            :href="route('dashboarduser')"
-                            class="flex items-center py-2 px-4 hover:bg-gray-700 hover:border-b-2 hover:border-blue-500 transition-all"
-                            :class="{ 'bg-gray-700': route().current('dashboarduser') }">
-                            <img src="../../image/dashboard.png" class="h-5 w-5 mr-3" alt="Dashboard Icon">
-                            Dashboard
-                        </Link>
-                        <Link
                             :href="route('devices.index')"
                             class="flex items-center py-2 px-4 hover:bg-gray-700 hover:border-b-2 hover:border-blue-500 transition-all"
                             :class="{ 'bg-gray-700': route().current('devices.index') }">

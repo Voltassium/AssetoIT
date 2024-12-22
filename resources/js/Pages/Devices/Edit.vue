@@ -21,19 +21,27 @@ const form = useForm({
     name: props.device.name,
     type: props.device.type,
     manufacturer: props.device.manufacturer,
-    specifications: props.device.specifications,
+    specifications: props.device.specifications || '',
     status: props.device.status,
 });
 
 function submit() {
     form.put(route('devices.update', props.device.id), {
-        preserveScroll: true
+        preserveScroll: true,
+        onSuccess: () => {
+            form.reset();
+        },
+        onError: (errors) => {
+            if (Object.keys(errors).length === 0) {
+                console.error('An unexpected error occurred');
+            }
+        }
     });
 }
 </script>
 
 <template>
-    <Head title="Edit Device" />
+    <Head title="Edit Perangkat" />
 
     <AuthenticatedLayout>
         <template #header>
@@ -61,30 +69,33 @@ function submit() {
                                     type="text"
                                     class="mt-1 block w-full"
                                     required
+                                    :disabled="form.processing"
                                 />
                                 <InputError :message="form.errors.name" class="mt-2" />
                             </div>
 
                             <div>
-                                <InputLabel for="type" value="Tipe" />
+                                <InputLabel for="type" value="Tipe Perangkat" />
                                 <TextInput
                                     id="type"
                                     v-model="form.type"
                                     type="text"
                                     class="mt-1 block w-full"
                                     required
+                                    :disabled="form.processing"
                                 />
                                 <InputError :message="form.errors.type" class="mt-2" />
                             </div>
 
                             <div>
-                                <InputLabel for="manufacturer" value="Vendor" />
+                                <InputLabel for="manufacturer" value="Manufacturer" />
                                 <TextInput
                                     id="manufacturer"
                                     v-model="form.manufacturer"
                                     type="text"
                                     class="mt-1 block w-full"
                                     required
+                                    :disabled="form.processing"
                                 />
                                 <InputError :message="form.errors.manufacturer" class="mt-2" />
                             </div>
@@ -95,7 +106,7 @@ function submit() {
                                     id="specifications"
                                     v-model="form.specifications"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                    rows="3"
+                                    :disabled="form.processing"
                                 ></textarea>
                                 <InputError :message="form.errors.specifications" class="mt-2" />
                             </div>
@@ -105,8 +116,9 @@ function submit() {
                                 <select
                                     id="status"
                                     v-model="form.status"
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
                                     required
+                                    :disabled="form.processing"
                                 >
                                     <option v-for="status in statusOptions" :key="status" :value="status">
                                         {{ status }}
@@ -117,7 +129,7 @@ function submit() {
 
                             <div class="flex items-center gap-4">
                                 <PrimaryButton :disabled="form.processing">
-                                    {{ form.processing ? 'menyimpan...' : 'Simpan Perubahan' }}
+                                    {{ form.processing ? 'Menyimpan...' : 'Simpan Perubahan' }}
                                 </PrimaryButton>
 
                                 <transition

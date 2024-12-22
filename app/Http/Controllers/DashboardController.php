@@ -38,23 +38,4 @@ class DashboardController extends Controller
 
             return Inertia::render('Dashboard', compact('stats'));
     }
-
-    public function userDashboard()
-    {
-        $user = auth()->user();
-
-        return Inertia::render('DashboardUser', [
-            'user' => $user,
-            'activeBorrowings' => Borrowing::with(['device'])
-                ->where('user_id', $user->id)
-                ->whereNotIn('status', ['returned', 'rejected'])
-                ->latest()
-                ->paginate(10),
-            'borrowingHistory' => Borrowing::with(['device'])
-                ->where('user_id', $user->id)
-                ->whereIn('status', ['returned', 'rejected'])
-                ->latest()
-                ->paginate(10)
-        ]);
-    }
 }

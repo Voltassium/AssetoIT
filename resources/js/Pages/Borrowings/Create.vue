@@ -8,7 +8,6 @@ const props = defineProps({
 
 const form = useForm({
     device_id: '',
-    reason: '',
     borrow_date: new Date().toISOString().substr(0, 10),
     return_date: ''
 });
@@ -46,19 +45,6 @@ const calculateMinReturn = () => {
                                 </select>
                                 <div v-if="form.errors.device_id" class="mt-1 text-sm text-red-600">
                                     {{ form.errors.device_id }}
-                                </div>
-                            </div>
-
-                            <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-700">Alasan Meminjam Perangkat</label>
-                                <textarea
-                                    v-model="form.reason"
-                                    rows="3"
-                                    class="mt-1 block w-full rounded-md border-gray-300"
-                                    placeholder="Berikan alasan peminjaman"
-                                ></textarea>
-                                <div v-if="form.errors.reason" class="mt-1 text-sm text-red-600">
-                                    {{ form.errors.reason }}
                                 </div>
                             </div>
 
