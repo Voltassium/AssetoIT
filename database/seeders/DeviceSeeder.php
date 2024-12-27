@@ -57,7 +57,7 @@ class DeviceSeeder extends Seeder
         ]);
 
         Device::create([
-            'name' => 'KAT Loco S - Next Gen VR Locomotion System',
+            'name' => 'KAT Loco S',
             'type' => 'VR accessory',
             'manufacturer' => 'KAT VR',
             'specifications' => 'description',
@@ -89,7 +89,7 @@ class DeviceSeeder extends Seeder
         ]);
 
         Device::create([
-            'name' => 'Lemari Sliding Kaca Chitose Chiba SL-1830 G Lemari Arsip Kanto',
+            'name' => 'Lemari Sliding Kaca Chitose Chiba SL-1830',
             'type' => 'Lemari',
             'manufacturer' => 'Chitose',
             'specifications' => 'description',
@@ -97,7 +97,7 @@ class DeviceSeeder extends Seeder
         ]);
 
         Device::create([
-            'name' => 'Lemari Sliding Kaca Chitose Chiba SL-1830 G Lemari Arsip Kanto',
+            'name' => 'Lemari Sliding Kaca Chitose Chiba SL-1830',
             'type' => 'Lemari',
             'manufacturer' => 'Chitose',
             'specifications' => 'description',

@@ -12,7 +12,7 @@ class UserSeeder extends Seeder
         User::create([
             'name' => 'Administrator',
             'nim' => 'V0000000',
-            'email' => 'admin@gmail.com',
+            'email' => 'assetoit.uns@gmail.com',
             'password' => Hash::make('password'),
             'role' => 'admin',
         ]);
@@ -21,9 +21,9 @@ class UserSeeder extends Seeder
         User::create([
             'name' => 'Dimas Premono',
             'nim' => 'V3423030',
-            'email' => 'dimas@gmail.com',
+            'email' => 'dimas.premono@gmail.com',
             'password' => Hash::make('password'),
-            'role' => 'user',
+            'role' => 'admin',
         ]);
 
         User::create([

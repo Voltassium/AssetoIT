@@ -40,10 +40,8 @@ Route::middleware(['auth', 'verified'])->group(function(){
     Route::patch('/users/{user}/toggle-active', [UserController::class, 'toggleActive'])
     ->name('users.toggle-active');
 
-    // Admin only device management routes
-    // Route::middleware(['admin'])->group(function() {
-        Route::resource('devices', DeviceController::class)->except(['index']);
-        Route::get('/damaged-devices', [DeviceController::class, 'damagedDevices'])->name('damaged-devices');
+    Route::resource('devices', DeviceController::class)->except(['index']);
+    Route::get('/damaged-devices', [DeviceController::class, 'damagedDevices'])->name('damaged-devices');
 
     // Rute baru untuk unduh laporan peminjaman
     Route::get('/borrowings/report', [BorrowingController::class, 'exportReport'])
@@ -62,6 +60,9 @@ Route::middleware(['auth', 'verified'])->group(function(){
     Route::resource('borrowings', BorrowingController::class);
     Route::patch('borrowings/{borrowing}/return', [BorrowingController::class, 'return'])
         ->name('borrowings.return');
+
+    Route::post('/borrowings/{borrowing}/approve', [BorrowingController::class, 'approve'])->name('borrowings.approve');
+    Route::delete('/borrowings/{borrowing}/reject', [BorrowingController::class, 'reject'])->name('borrowings.reject');
 });
 
 require __DIR__.'/auth.php';

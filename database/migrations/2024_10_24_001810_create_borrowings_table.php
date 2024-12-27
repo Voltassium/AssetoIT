@@ -15,6 +15,11 @@ return new class extends Migration
             $table->date('borrow_date');
             $table->date('return_date')->nullable();
             $table->date('actual_return_date')->nullable();
+            $table->string('status')->default('pending');
+            $table->string('reason')->nullable();
+            $table->string('rejection_reason')->nullable();
+            $table->timestamp('approved_at')->nullable();
+            $table->foreignId('approved_by')->nullable()->constrained('users');
             $table->timestamps();
         });
     }

@@ -26,7 +26,6 @@ class Device extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'status' => 'string',
         'specifications' => 'array',
         'count' => 'integer',
     ];

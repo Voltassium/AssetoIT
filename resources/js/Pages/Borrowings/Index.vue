@@ -28,14 +28,33 @@ const formatDate = (date) => {
 
 const approve = (borrowingId) => {
     if (confirm('Apakah Anda yakin ingin menyetujui peminjaman ini?')) {
-        form.post(route('borrowings.approve', borrowingId));
+        form.post(route('borrowings.approve', borrowingId), {
+            onSuccess: () => {
+                // You can add a success message here if needed
+            },
+        });
     }
 };
 
 const reject = (borrowingId) => {
     if (confirm('Apakah Anda yakin ingin menolak peminjaman ini?')) {
-        form.post(route('borrowings.reject', borrowingId));
+        form.delete(route('borrowings.reject', borrowingId), {
+            onSuccess: () => {
+                // You can add a success message here if needed
+            },
+        });
     }
+};
+
+const getStatusClasses = (status) => {
+    const colors = {
+        pending: 'bg-yellow-100 text-yellow-800 ring-1 ring-yellow-600/20',
+        approved: 'bg-green-100 text-green-800 ring-1 ring-green-600/20',
+        rejected: 'bg-red-100 text-red-800 ring-1 ring-red-600/20',
+        returned: 'bg-blue-100 text-blue-800 ring-1 ring-blue-600/20',
+        overdue: 'bg-orange-100 text-orange-800 ring-1 ring-orange-600/20',
+    };
+    return colors[status] || 'bg-gray-100 text-gray-800 ring-1 ring-gray-600/20';
 };
 </script>
 
@@ -100,8 +119,12 @@ const reject = (borrowingId) => {
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">{{ borrowing.device.name }}</div>
-                                        <div class="text-sm text-gray-500">{{ borrowing.device.type }}</div>
+                                        <div class="text-sm text-gray-900 truncate max-w-[200px]" :title="borrowing.device.name">
+                                            {{ borrowing.device.name }}
+                                        </div>
+                                        <div class="text-sm text-gray-500 truncate max-w-[200px]" :title="borrowing.device.type">
+                                            {{ borrowing.device.type }}
+                                        </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                         {{ formatDate(borrowing.borrow_date) }}
@@ -112,22 +135,14 @@ const reject = (borrowingId) => {
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <span :class="[
                                             'px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full shadow-sm',
-                                            borrowing.actual_return_date
-                                                ? 'bg-emerald-100 text-emerald-800 ring-1 ring-emerald-600/20'
-                                                : borrowing.return_date < new Date().toISOString().split('T')[0]
-                                                    ? 'bg-red-100 text-red-800 ring-1 ring-red-600/20'
-                                                    : 'bg-amber-100 text-amber-800 ring-1 ring-amber-600/20'
+                                            getStatusClasses(borrowing.status)
                                         ]">
-                                            {{ borrowing.actual_return_date
-                                                ? 'Returned'
-                                                : borrowing.return_date < new Date().toISOString().split('T')[0]
-                                                    ? 'Overdue'
-                                                    : 'Active'
-                                            }}
+                                            {{ borrowing.status_label }}
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                        <div v-if="!borrowing.actual_return_date && $page.props.auth.user.role === 'user'" class="flex items-center space-x-2">
+                                        <!-- Return button for approved borrowings -->
+                                        <div v-if="!borrowing.actual_return_date && borrowing.status === 'approved' && $page.props.auth.user.role === 'user'" class="flex items-center space-x-2">
                                             <button
                                                 @click="returnDevice(borrowing.id)"
                                                 class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-semibold rounded-md
@@ -135,46 +150,36 @@ const reject = (borrowingId) => {
                                                        transform transition-all duration-200 hover:scale-105
                                                        focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:shadow-outline">
                                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                          d="M5 13l4 4L19 7" />
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                                                 </svg>
                                                 Kembalikan
                                             </button>
+                                        </div>
 
-                                            <!-- Status badge for pending -->
-                                            <span v-if="borrowing.status === 'pending' && !isAdmin"
-                                                  class="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800">
-                                                Menunggu Persetujuan
-                                            </span>
+                                        <!-- Admin approval buttons for pending borrowings -->
+                                        <div v-if="$page.props.auth.user.role === 'admin' && borrowing.status === 'pending'"
+                                             class="flex items-center space-x-2">
+                                            <button
+                                                @click="approve(borrowing.id)"
+                                                class="inline-flex items-center px-3 py-2 bg-green-600 text-white text-sm font-medium rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                                                :disabled="form.processing"
+                                            >
+                                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                                </svg>
+                                                Setujui
+                                            </button>
 
-                                            <!-- Tombol Setuju/Tolak -->
-                                            <div v-if="isAdmin && borrowing.status === 'pending'" class="flex items-center space-x-2">
-                                                <button
-                                                    @click="approve(borrowing.id)"
-                                                    class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md text-sm text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50"
-                                                    :disabled="form.processing"
-                                                >
-                                                    <svg v-if="form.processing" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                                    </svg>
-                                                    <svg v-else class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                                    </svg>
-                                                    {{ form.processing ? 'Memproses...' : 'Setujui' }}
-                                                </button>
-
-                                                <button
-                                                    @click="reject(borrowing.id)"
-                                                    class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md text-sm text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50"
-                                                    :disabled="form.processing"
-                                                >
-                                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                                    </svg>
-                                                    {{ form.processing ? 'Memproses...' : 'Tolak' }}
-                                                </button>
-                                            </div>
+                                            <button
+                                                @click="reject(borrowing.id)"
+                                                class="inline-flex items-center px-3 py-2 bg-red-600 text-white text-sm font-medium rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                                                :disabled="form.processing"
+                                            >
+                                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                                </svg>
+                                                Tolak
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>

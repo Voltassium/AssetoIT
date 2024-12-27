@@ -1,5 +1,5 @@
 <script setup>
-import { Head, useForm } from '@inertiajs/vue3';
+import { Head, useForm, Link } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 
 const props = defineProps({
@@ -11,13 +11,18 @@ const form = useForm({
     nim: props.user.nim,
     email: props.user.email,
     is_active: props.user.is_active,
-    role: props.user.role, // Add role field
+    role: props.user.role,
     password: '',
     password_confirmation: '',
 });
 
 function submit() {
-    form.put(route('users.update', props.user.id));
+    form.put(route('users.update', props.user.id), {
+        preserveScroll: true,
+        onSuccess: () => {
+            form.reset('password', 'password_confirmation');
+        }
+    });
 }
 </script>
 

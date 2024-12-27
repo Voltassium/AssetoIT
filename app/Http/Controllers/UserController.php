@@ -60,6 +60,8 @@ class UserController extends Controller
         $rules = [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$user->id],
+            'role' => ['required', 'in:admin,user'],
+            'is_active' => ['boolean']
         ];
 
         // Only validate password if it's provided
@@ -76,10 +78,13 @@ class UserController extends Controller
             $validated['password'] = Hash::make($validated['password']);
         }
 
-        $user->update($validated);
-
-        return redirect()->route('users.index')
-            ->with('message', 'User updated successfully.');
+        try {
+            $user->update($validated);
+            return redirect()->route('users.index')
+                ->with('message', 'User berhasil diperbarui');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Terjadi kesalahan saat memperbarui user']);
+        }
     }
 
     public function destroy(User $user)

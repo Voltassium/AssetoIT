@@ -16,19 +16,20 @@ class BorrowingController extends Controller
     {
         $user = auth()->user();
 
-        // If user is admin, show all borrowings
-        if ($user->isAdmin()) {
-            $borrowings = Borrowing::with(['user', 'device'])
-                ->latest()
-                ->paginate(10);
+        $query = Borrowing::with(['user', 'device'])
+            ->latest();
+
+        if (!$user->isAdmin()) {
+            $query->where('user_id', $user->id);
         }
-        // If regular user, show only their borrowings
-        else {
-            $borrowings = Borrowing::with(['user', 'device'])
-                ->where('user_id', $user->id)
-                ->latest()
-                ->paginate(10);
-        }
+
+        $borrowings = $query->paginate(10)
+            ->through(function ($borrowing) {
+                return array_merge($borrowing->toArray(), [
+                    'status_label' => $borrowing->getStatusLabel(),
+                    'status_color' => $borrowing->getStatusColor()
+                ]);
+            });
 
         return Inertia::render('Borrowings/Index', [
             'borrowings' => $borrowings,
@@ -50,6 +51,7 @@ class BorrowingController extends Controller
             'device_id' => 'required|exists:devices,id',
             'borrow_date' => 'required|date',
             'return_date' => 'required|date|after:borrow_date',
+            'reason' => 'required|string|max:500', // Add this validation rule
         ]);
 
         // Add authenticated user's ID
@@ -76,20 +78,25 @@ class BorrowingController extends Controller
 
     public function approve(Borrowing $borrowing)
     {
+        // Update the borrowing status to approved
         $borrowing->update([
             'status' => 'approved',
-            'approved_at' => now(),
-            'approved_by' => auth()->id()
         ]);
 
-        $borrowing->device->update(['status' => Device::STATUS_IN_USE]);
-        return redirect()->back()
-            ->with('message', 'permintaan peminjaman telah disetujui.');
+        // Update the device status to in_use
+        $borrowing->device->update([
+            'status' => 'in_use'
+        ]);
+
+        return redirect()->back()->with('success', 'Peminjaman berhasil disetujui');
     }
 
-    public function reject(Request $request, Borrowing $borrowing)
+    public function reject(Borrowing $borrowing)
     {
-    $borrowing->delete();
+        // Delete the borrowing record
+        $borrowing->delete();
+
+        return redirect()->back()->with('success', 'Peminjaman berhasil ditolak');
     }
 
     public function return(Borrowing $borrowing)
