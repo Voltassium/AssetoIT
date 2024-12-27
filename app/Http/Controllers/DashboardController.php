@@ -8,34 +8,40 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        // Dummy Data Sementara
-        /*
         $stats = [
-            'availableDevices' => 150,
-            'damagedDevices' => 12,
-            'activeLoans' => 45,
-            'totalUsers' => 200,
-            'recentBorrowings' => [],
-            'recentDevices' => [],
-        ];*/
+            'totalBorrowings' => Borrowing::whereNotNull('approved_at')->count(),
+            'availableDevices' => Device::where('status', 'available')->count(),
+            'damagedDevices' => Device::where('status', 'damaged')->count(),
+            'activeLoans' => Borrowing::where('status', 'approved')
+                ->whereNull('actual_return_date')
+                ->whereNotNull('approved_at')
+                ->count(),
+            'activeUsers' => User::where('is_active', true)->count(),
+            'totalDevices' => Device::count(),
+            'returnedToday' => Borrowing::whereDate('actual_return_date', today())
+                ->whereNotNull('approved_at')
+                ->count(),
+        ];
 
+        return Inertia::render('Dashboard', compact('stats'));
+    }
 
-        $stats = [
-                'availableDevices' => Device::where('status', 'available')->count(),
-                'damagedDevices' => Device::where('status', 'damaged')->count(),
-                'activeLoans' => Borrowing::whereNull('return_date')->count(),
-                'totalUsers' => User::count(),
-                'recentBorrowings' => Borrowing::with(['user', 'device'])
-                    ->whereNull('return_date')
-                    ->latest()
-                    ->take(5)
-                    ->get(),
-                'recentDevices' => Device::latest()
-                    ->take(5)
-                    ->get(),
-            ];
+    public function userDashboard()
+    {
+        $user = auth()->user();
 
-
-            return Inertia::render('Dashboard', compact('stats'));
+        return Inertia::render('DashboardUser', [
+            'user' => $user,
+            'activeBorrowings' => Borrowing::with(['device'])
+                ->where('user_id', $user->id)
+                ->whereNotIn('status', ['returned', 'rejected'])
+                ->latest()
+                ->paginate(10),
+            'borrowingHistory' => Borrowing::with(['device'])
+                ->where('user_id', $user->id)
+                ->whereIn('status', ['returned', 'rejected'])
+                ->latest()
+                ->paginate(10)
+        ]);
     }
 }

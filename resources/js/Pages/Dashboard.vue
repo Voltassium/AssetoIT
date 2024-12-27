@@ -1,34 +1,20 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head } from '@inertiajs/vue3';
+import { Head, Link } from '@inertiajs/vue3';
 import { ref, onMounted } from 'vue';
 
 const props = defineProps({
     stats: {
         type: Object,
-        required: true,  
+        required: true,
     },
 });
 
-
 const isLoading = ref(true);
-const availableDevices = ref(0);
-const activeLoans = ref(0);
-const totalUsers = ref(0);
 
 onMounted(() => {
-    console.log('Stats received in props:', props.stats);
-    
-    if (props.stats) {
-        availableDevices.value = props.stats.availableDevices ?? 0;
-        activeLoans.value = props.stats.activeLoans ?? 0;
-        totalUsers.value = props.stats.totalUsers ?? 0;
-        isLoading.value = false;
-    } else {
-        console.error('Props.stats is undefined or null.');
-    }
+    isLoading.value = false;
 });
-
 
 </script>
 
@@ -57,13 +43,14 @@ onMounted(() => {
                                 <h3 class="text-lg font-semibold text-gray-700">Perangkat Tersedia</h3>
                                 <p class="text-3xl font-bold text-blue-600">
                                     <span v-if="isLoading">...</span>
-                                    <span v-else>{{ availableDevices }}</span>
+                                    <span v-else>{{ stats.availableDevices }}</span>
                                 </p>
                             </div>
                         </div>
                     </div>
 
-                    <div class="overflow-hidden p-4 bg-white rounded-lg shadow-sm transition-all duration-300 hover:shadow-md">
+
+                    <div class="overflow-hidden p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300">
                         <div class="flex items-center">
                             <div class="p-3 bg-green-100 rounded-full">
                                 <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -71,10 +58,10 @@ onMounted(() => {
                                 </svg>
                             </div>
                             <div class="ml-4">
-                                <h3 class="text-lg font-semibold text-gray-700">Peminjaman Aktif</h3>
+                                <h3 class="text-lg font-semibold text-gray-700">Total Peminjaman Aktif</h3>
                                 <p class="text-3xl font-bold text-green-600">
                                     <span v-if="isLoading">...</span>
-                                    <span v-else>{{ activeLoans }}</span>
+                                    <span v-else>{{ stats.activeLoans }}</span>
                                 </p>
                             </div>
                         </div>
@@ -88,10 +75,9 @@ onMounted(() => {
                                 </svg>
                             </div>
                             <div class="ml-4">
-                                <h3 class="text-lg font-semibold text-gray-700">Total Users</h3>
+                                <h3 class="text-lg font-semibold text-gray-700">Total Peminjaman</h3>
                                 <p class="text-3xl font-bold text-purple-600">
-                                    <span v-if="isLoading">...</span>
-                                    <span v-else>{{ totalUsers }}</span>
+                                    {{ isLoading ? '...' : stats.totalBorrowings }}
                                 </p>
                             </div>
                         </div>
@@ -129,7 +115,3 @@ onMounted(() => {
         </div>
     </AuthenticatedLayout>
 </template>
-
-<style scoped>
-/* Add any component-specific styles here */
-</style>

@@ -5,7 +5,9 @@ import { useForm } from '@inertiajs/vue3';
 import Pagination from '@/Components/Pagination.vue';
 
 const props = defineProps({
-    borrowings: Object
+    borrowings: Object,
+    isAdmin: Boolean,
+    reportUrl: String
 });
 
 const form = useForm({});
@@ -24,10 +26,16 @@ const formatDate = (date) => {
     return date ? new Date(date).toLocaleDateString() : '-';
 };
 
-// Function to handle report download
-const downloadReport = () => {
-    // You can customize the report route as per your backend API
-    window.location.href = route('borrowings.report');
+const approve = (borrowingId) => {
+    if (confirm('Apakah Anda yakin ingin menyetujui peminjaman ini?')) {
+        form.post(route('borrowings.approve', borrowingId));
+    }
+};
+
+const reject = (borrowingId) => {
+    if (confirm('Apakah Anda yakin ingin menolak peminjaman ini?')) {
+        form.post(route('borrowings.reject', borrowingId));
+    }
 };
 </script>
 
@@ -47,15 +55,18 @@ const downloadReport = () => {
                         </svg>
                         Pinjam Perangkat
                     </Link>
-                    <!-- Download Report Button -->
-                    <button 
-    @click="downloadReport"
-    class="inline-flex items-center px-4 py-2 bg-blue-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-600 focus:bg-blue-600 active:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150">
-    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-    </svg>
-    Unduh Laporan
-</button>
+
+                    <!-- Download PDF untuk admin saja -->
+                    <Link
+                        v-if="$page.props.auth.user.role === 'admin'"
+                        :href="route('borrowings.report')"
+                        class="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors duration-200">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        Unduh Laporan PDF
+                    </Link>
                 </div>
             </div>
         </template>
@@ -129,6 +140,41 @@ const downloadReport = () => {
                                                 </svg>
                                                 Kembalikan
                                             </button>
+
+                                            <!-- Status badge for pending -->
+                                            <span v-if="borrowing.status === 'pending' && !isAdmin"
+                                                  class="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800">
+                                                Menunggu Persetujuan
+                                            </span>
+
+                                            <!-- Tombol Setuju/Tolak -->
+                                            <div v-if="isAdmin && borrowing.status === 'pending'" class="flex items-center space-x-2">
+                                                <button
+                                                    @click="approve(borrowing.id)"
+                                                    class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md text-sm text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50"
+                                                    :disabled="form.processing"
+                                                >
+                                                    <svg v-if="form.processing" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                    </svg>
+                                                    <svg v-else class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                                    </svg>
+                                                    {{ form.processing ? 'Memproses...' : 'Setujui' }}
+                                                </button>
+
+                                                <button
+                                                    @click="reject(borrowing.id)"
+                                                    class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md text-sm text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50"
+                                                    :disabled="form.processing"
+                                                >
+                                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                                    </svg>
+                                                    {{ form.processing ? 'Memproses...' : 'Tolak' }}
+                                                </button>
+                                            </div>
                                         </div>
                                     </td>
                                 </tr>

@@ -16,7 +16,12 @@ const form = useForm({
 });
 
 function submit() {
-    form.post(route('devices.store'));
+    form.post(route('devices.store'), {
+        preserveScroll: true,
+        onSuccess: () => {
+            form.reset();
+        }
+    });
 }
 </script>
 
@@ -32,64 +37,114 @@ function submit() {
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6 bg-white border-b border-gray-200">
-                        <form @submit.prevent="submit">
-                            <div class="mb-4">
-                                <label class="block text-gray-700 text-sm font-bold mb-2" for="name">
-                                    Nama
+                        <form @submit.prevent="submit" class="space-y-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700" for="name">
+                                    Nama Perangkat
                                 </label>
-                                <input v-model="form.name" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="name" type="text" placeholder="Nama Perangkat">
+                                <input
+                                    v-model="form.name"
+                                    type="text"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                    :class="{ 'border-red-500': form.errors.name }"
+                                >
+                                <div v-if="form.errors.name" class="mt-1 text-sm text-red-600">
+                                    {{ form.errors.name }}
+                                </div>
                             </div>
-                            <div class="mb-4">
-                                <label class="block text-gray-700 text-sm font-bold mb-2" for="type">
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700" for="type">
                                     Tipe
                                 </label>
-                                <input v-model="form.type" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="type" type="text" placeholder="Tipe Perangkat">
+                                <input
+                                    v-model="form.type"
+                                    type="text"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                    :class="{ 'border-red-500': form.errors.type }"
+                                >
+                                <div v-if="form.errors.type" class="mt-1 text-sm text-red-600">
+                                    {{ form.errors.type }}
+                                </div>
                             </div>
-                            <div class="mb-4">
-                                <label class="block text-gray-700 text-sm font-bold mb-2" for="manufacturer">
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700" for="manufacturer">
                                     Vendor
                                 </label>
-                                <input v-model="form.manufacturer" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="manufacturer" type="text" placeholder="Manufacturer">
+                                <input
+                                    v-model="form.manufacturer"
+                                    type="text"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                    :class="{ 'border-red-500': form.errors.manufacturer }"
+                                >
+                                <div v-if="form.errors.manufacturer" class="mt-1 text-sm text-red-600">
+                                    {{ form.errors.manufacturer }}
+                                </div>
                             </div>
-                            <div class="mb-4">
-                                <label class="block text-gray-700 text-sm font-bold mb-2" for="specifications">
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700" for="specifications">
                                     Spesifikasi
                                 </label>
                                 <textarea
                                     v-model="form.specifications"
-                                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                    id="specifications"
-                                    placeholder="Masukkan spesifikasi perangkat"
                                     rows="3"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                    :class="{ 'border-red-500': form.errors.specifications }"
                                 ></textarea>
+                                <div v-if="form.errors.specifications" class="mt-1 text-sm text-red-600">
+                                    {{ form.errors.specifications }}
+                                </div>
                             </div>
-                            <div class="mb-4">
-                                <label class="block text-gray-700 text-sm font-bold mb-2" for="count">
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700" for="count">
                                     Jumlah
                                 </label>
                                 <input
                                     v-model="form.count"
                                     type="number"
                                     min="1"
-                                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                    id="count"
-                                    placeholder="Jumlah perangkat"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                    :class="{ 'border-red-500': form.errors.count }"
                                 >
+                                <div v-if="form.errors.count" class="mt-1 text-sm text-red-600">
+                                    {{ form.errors.count }}
+                                </div>
                             </div>
-                            <div class="mb-4">
-                                <label class="block text-gray-700 text-sm font-bold mb-2" for="status">
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700" for="status">
                                     Status
                                 </label>
-                                <select v-model="form.status" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="status">
+                                <select
+                                    v-model="form.status"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                    :class="{ 'border-red-500': form.errors.status }"
+                                >
                                     <option value="">Pilih status</option>
                                     <option v-for="status in statusOptions" :key="status" :value="status">
                                         {{ status }}
                                     </option>
                                 </select>
+                                <div v-if="form.errors.status" class="mt-1 text-sm text-red-600">
+                                    {{ form.errors.status }}
+                                </div>
                             </div>
-                            <div class="flex items-center justify-between">
-                                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
-                                    Tambah Perangkat
+
+                            <div class="flex items-center justify-end">
+                                <button
+                                    type="submit"
+                                    class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150"
+                                    :class="{ 'opacity-25': form.processing }"
+                                    :disabled="form.processing"
+                                >
+                                    <svg v-if="form.processing" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    {{ form.processing ? 'Menyimpan...' : 'Tambah Perangkat' }}
                                 </button>
                             </div>
                         </form>

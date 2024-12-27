@@ -4,9 +4,11 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 
 const form = useForm({
     name: '',
+    nim: '',
     email: '',
     password: '',
     password_confirmation: '',
+    role: 'user', // Add role field with default value
 });
 
 function submit() {
@@ -34,6 +36,12 @@ function submit() {
                                 <input v-model="form.name" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="name" type="text" placeholder="Name">
                             </div>
                             <div class="mb-4">
+                                <label class="block text-gray-700 text-sm font-bold mb-2" for="nim">
+                                    NIM
+                                </label>
+                                <input v-model="form.nim" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="nim" type="text" placeholder="NIM">
+                            </div>
+                            <div class="mb-4">
                                 <label class="block text-gray-700 text-sm font-bold mb-2" for="email">
                                     Email
                                 </label>
@@ -50,6 +58,15 @@ function submit() {
                                     Confirm Password
                                 </label>
                                 <input v-model="form.password_confirmation" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="password_confirmation" type="password" placeholder="Confirm Password">
+                            </div>
+                            <div class="mb-4">
+                                <label class="block text-gray-700 text-sm font-bold mb-2" for="role">
+                                    Role
+                                </label>
+                                <select v-model="form.role" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="role">
+                                    <option value="user">User</option>
+                                    <option value="admin">Admin</option>
+                                </select>
                             </div>
                             <div class="flex items-center justify-between">
                                 <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">

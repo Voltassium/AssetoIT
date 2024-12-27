@@ -6,6 +6,7 @@ use App\Models\Device;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class DeviceController extends Controller
 {
@@ -107,5 +108,19 @@ class DeviceController extends Controller
     {
         $device->delete();
         return redirect()->route('devices.index')->with('message', 'Device deleted successfully.');
+    }
+
+    public function exportReport()
+    {
+        $devices = Device::orderBy('name')
+            ->get();
+
+        $pdf = Pdf::loadView('devices', [
+            'devices' => $devices,
+            'title' => 'Laporan Data Perangkat',
+            'date' => now()->format('d-m-Y')
+        ]);
+
+        return $pdf->stream('laporan_perangkat.pdf');
     }
 }

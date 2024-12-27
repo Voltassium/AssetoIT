@@ -70,4 +70,21 @@ class Borrowing extends Model
     {
         return $query->whereNotNull('return_date');
     }
+
+    /**
+     * Calculate the late fee for the borrowing
+     */
+    public function calculateLateFee()
+    {
+        if (!$this->actual_return_date || !$this->return_date) {
+            return 0;
+        }
+
+        if ($this->actual_return_date->isBefore($this->return_date)) {
+            return 0;
+        }
+
+        $daysLate = max(0, $this->actual_return_date->diffInDays($this->return_date));
+        return $daysLate * self::LATE_FEE_PER_DAY;
+    }
 }
